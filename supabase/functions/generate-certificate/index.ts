@@ -18,30 +18,19 @@ interface CertificateData {
 
 async function loadCertificateTemplate(): Promise<string> {
   try {
-    // In a real deployment, you might want to fetch this from a URL or store it as a constant
-    // For now, we'll return the template as a string
-    const templateResponse = await fetch('https://raw.githubusercontent.com/your-repo/certificate-template.html');
-    if (templateResponse.ok) {
-      return await templateResponse.text();
+    // Load the template from the public directory
+    const templateUrl = 'https://raw.githubusercontent.com/Josebert3001/ibeno-origin-scribe/main/public/certificate-template.html';
+    const templateResponse = await fetch(templateUrl);
+    if (!templateResponse.ok) {
+      throw new Error(`Failed to fetch template: ${templateResponse.statusText}`);
     }
+    return await templateResponse.text();
   } catch (error) {
-    console.log('Could not fetch external template, using embedded template');
-  }
+    console.error('Error loading certificate template:', error);
   
-  // Fallback to embedded template
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Origin - Ibeno Local Government</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
-        
-        @page {
-            size: A4;
-            margin: 0;
-        }
+    // If we can't load the template, throw an error
+    throw new Error('Failed to load certificate template');
+  }
         
         body {
             margin: 0;
