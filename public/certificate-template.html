@@ -3,272 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Origin - Ibeno Local Government</title>
+    <title>Certificate of Origin</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
-        
         @page {
-            size: A4;
+            size: A5;
             margin: 0;
         }
         
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Times New Roman', serif;
-            background: white;
-            width: 210mm;
-            height: 297mm;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .certificate-container {
-            width: 190mm;
-            height: 270mm;
-            position: relative;
-            background: white;
-            border: 12px solid #0B7B3E;
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ornate" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2" fill="%230B7B3E"/><path d="M0,5 Q5,0 10,5 Q5,10 0,5" fill="none" stroke="%230B7B3E" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23ornate)"/></svg>') 12 repeat;
-            padding: 20mm;
             box-sizing: border-box;
         }
         
-        .ornate-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 8px solid #0B7B3E;
-            border-radius: 8px;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                #0B7B3E 2px,
-                #0B7B3E 4px
-            ),
-            repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 2px,
-                #0B7B3E 2px,
-                #0B7B3E 4px
-            );
-            opacity: 0.3;
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #ffffff;
+            width: 148mm;
+            height: 210mm;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
         }
         
-        .inner-content {
-            position: relative;
-            z-index: 2;
+        .certificate-container {
+            width: 100%;
             height: 100%;
-            background: white;
-            padding: 15mm;
-            border: 2px solid #0B7B3E;
-            border-radius: 4px;
+            background: linear-gradient(45deg, 
+                transparent 0%, 
+                rgba(0, 166, 80, 0.03) 25%, 
+                transparent 50%, 
+                rgba(0, 166, 80, 0.03) 75%, 
+                transparent 100%);
+            background-size: 15px 15px;
+            border: 12px solid #00a650;
+            position: relative;
+            padding: 12mm;
+        }
+        
+        .certificate-container::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid #00a650;
+            border-radius: 8px;
+            opacity: 0.6;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 15mm;
+            margin-bottom: 15px;
             position: relative;
-        }
-        
-        .coat-of-arms {
-            position: absolute;
-            top: -5mm;
-            left: 10mm;
-            width: 20mm;
-            height: 20mm;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FFD700" stroke="%23000" stroke-width="2"/><text x="50" y="55" text-anchor="middle" font-size="12" font-weight="bold">NIGERIA</text></svg>') no-repeat center center;
-            background-size: contain;
-        }
-        
-        .govt-seal {
-            position: absolute;
-            top: -5mm;
-            right: 10mm;
-            width: 20mm;
-            height: 20mm;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%230B7B3E" stroke="%23000" stroke-width="2"/><text x="50" y="45" text-anchor="middle" font-size="8" font-weight="bold" fill="white">IBENO</text><text x="50" y="60" text-anchor="middle" font-size="6" fill="white">LOCAL GOVT</text></svg>') no-repeat center center;
-            background-size: contain;
+            z-index: 2;
         }
         
         .header h1 {
-            font-size: 24pt;
-            font-weight: bold;
-            color: #0B7B3E;
-            margin: 0;
+            font-size: 27px;
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-weight: 1000;
+            color: #00a650;
+            letter-spacing: 1px;
+            margin: 4px 0 8px 0;
+            padding: 0 5px;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.15);
+            white-space: nowrap;
+            width: 100%;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            line-height: 1.2;
+            -webkit-text-stroke: 1px #00a650;
         }
-        
-        .header .state {
-            font-size: 14pt;
-            color: #0B7B3E;
-            margin: 2mm 0;
-            font-weight: bold;
-            text-transform: uppercase;
+
+        .header h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
-        
-        .header .location {
-            font-size: 11pt;
-            color: #000;
-            margin: 1mm 0;
+
+        .header-line {
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(90deg, #00a650, #00aeef, #00a650);
+            margin: 10px auto;
+            border-radius: 2px;
         }
-        
-        .refs {
-            display: flex;
-            justify-content: space-between;
-            margin: 8mm 0;
-            font-size: 11pt;
+
+        .reference-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            align-items: start;
+            margin-bottom: 15px;
+            font-size: 12px;
+            position: relative;
+            z-index: 2;
         }
-        
-        .refs div {
-            min-width: 60mm;
+
+        .left-refs {
+            text-align: left;
         }
-        
-        .date-section {
-            text-align: right;
-            margin: 8mm 0;
-            font-size: 11pt;
+
+        .left-refs p {
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #2c3e50;
         }
-        
-        .cert-number {
+
+        .left-refs .ref-label {
+            font-weight: 600;
+            color: #00a650;
+        }
+
+        .center-seal {
             text-align: center;
-            font-size: 18pt;
-            font-weight: bold;
-            color: #000;
-            margin: 5mm 0;
-            letter-spacing: 2px;
+            justify-self: center;
         }
-        
-        .title {
-            text-align: center;
-            font-family: 'Dancing Script', cursive;
-            font-size: 36pt;
-            font-weight: 700;
-            color: #1E90FF;
-            margin: 8mm 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .content {
-            font-size: 12pt;
-            line-height: 1.8;
-            text-align: justify;
-            margin: 10mm 0;
-            color: #000;
-        }
-        
-        .content .formal-text {
-            text-align: center;
-            margin-bottom: 8mm;
-            font-weight: bold;
-        }
-        
-        .bearer-info {
-            margin: 8mm 0;
-            line-height: 2.2;
-        }
-        
-        .bearer-name {
-            border-bottom: 2px dotted #000;
-            min-width: 80mm;
-            display: inline-block;
-            text-align: center;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 1mm 3mm;
-        }
-        
-        .location-info {
-            border-bottom: 2px dotted #000;
-            min-width: 60mm;
-            display: inline-block;
-            text-align: center;
-            font-weight: bold;
-            padding: 1mm 3mm;
-        }
-        
-        .footer-content {
-            margin-top: 8mm;
-            text-align: justify;
-            line-height: 1.6;
-        }
-        
-        .signature-section {
-            position: absolute;
-            bottom: 15mm;
-            right: 20mm;
-            text-align: center;
-            width: 50mm;
-        }
-        
-        .signature-box {
-            width: 45mm;
-            height: 20mm;
-            border: 2px solid #000;
-            margin-bottom: 3mm;
-            background: white;
-        }
-        
-        .signature-text {
-            font-size: 10pt;
-            line-height: 1.3;
-        }
-        
-        .signature-name {
-            font-weight: bold;
-            margin-bottom: 1mm;
-        }
-        
-        .signature-title {
-            font-size: 9pt;
-            color: #0B7B3E;
-            font-weight: bold;
-        }
-        
-        .red-seal {
-            position: absolute;
-            bottom: 15mm;
-            left: 20mm;
-            width: 25mm;
-            height: 25mm;
-            background: radial-gradient(circle, #FF0000 0%, #CC0000 70%, #AA0000 100%);
+
+        .government-seal {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            border: 3px solid #AA0000;
-            box-shadow: 0 0 10px rgba(255,0,0,0.5);
-        }
-        
-        .qr-code-section {
-            position: absolute;
-            bottom: 50mm;
-            right: 20mm;
-            width: 25mm;
-            height: 25mm;
-            border: 1px solid #ccc;
-            background: white;
+            background: radial-gradient(circle, #00a650 0%, #007a3d 70%, #004d26 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .qr-code-section img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
-        }
-        
-        .placeholder {
-            background-color: #f0f0f0;
-            padding: 1px 3px;
-            border-radius: 2px;
+            color: white;
+            font-size: 8px;
+            text-align: center;
             font-weight: bold;
+            margin: 0 auto 6px auto;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,166,80,0.4);
+            border: 2px solid #ffffff;
+        }
+
+        .seal-motto {
+            font-size: 8px;
+            font-weight: bold;
+            color: #00a650;
+            margin-top: 4px;
+        }
+
+        .right-info {
+            text-align: right;
+        }
+
+        .right-info p {
+            margin-bottom: 4px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .right-info .address-line {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .right-info .date-line {
+            font-weight: 600;
+            color: #00a650;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+        
+        .title {
+            font-size: 36px;
+            color: #00aeef;
+            margin: 30px 0;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .content {
+            font-size: 14px;
+            line-height: 1.8;
+            text-align: justify;
+            margin: 25px 0;
+            position: relative;
+            z-index: 2;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .content p {
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        
+        .content p strong {
+            color: #00a650;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            position: relative;
+        }
+        
+        .signature {
+            float: right;
+            text-align: center;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            border: 2px solid #00a650;
+            min-width: 160px;
+        }
+        
+        .signature::before {
+            content: '';
+            display: block;
+            border-bottom: 2px solid #2c3e50;
+            height: 40px;
+            margin-bottom: 8px;
+        }
+        
+        .signature br {
+            margin-bottom: 5px;
+        }
+        
+        .official-seal {
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #dc143c 0%, #b91c1c 50%, #991b1b 100%);
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0.85;
+            box-shadow: 0 4px 15px rgba(220,20,60,0.4);
+            border: 3px solid #ffffff;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .qr-code {
+            float: left;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #00a650;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #00a650;
+            background: rgba(255,255,255,0.95);
+            z-index: 2;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 42px;
+            color: rgba(0, 166, 80, 0.08);
+            font-weight: bold;
+            z-index: 0;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
         }
         
         @media print {
@@ -278,6 +288,7 @@
             }
             
             .certificate-container {
+                border: 12px solid #00a650;
                 page-break-inside: avoid;
             }
         }
@@ -285,94 +296,71 @@
 </head>
 <body>
     <div class="certificate-container">
-        <div class="ornate-border"></div>
-        <div class="inner-content">
-            <div class="coat-of-arms"></div>
-            <div class="govt-seal"></div>
-            
-            <div class="header">
-                <h1>Ibeno Local Government</h1>
-                <div class="state">Akwa Ibom State</div>
-                <div class="location">Ibeno Secretariat,</div>
-                <div class="location">Upenekang Town</div>
+        <div class="watermark">IBENO LOCAL GOVERNMENT</div>
+        
+        <div class="header">
+            <h1>IBENO LOCAL GOVERNMENT</h1>
+            <h2>AKWA IBOM STATE</h2>
+            <div class="header-line"></div>
+        </div>
+
+        <div class="reference-section">
+            <div class="left-refs">
+                <p><span class="ref-label">Telegrams:</span> IBENO LG</p>
+                <p><span class="ref-label">Telephone:</span> +234-XXX-XXXX</p>
+                <p><span class="ref-label">Ref No:</span> <span id="ref_number">{{certificate_number}}</span></p>
             </div>
             
-            <div class="refs">
-                <div>Our Ref: <strong><span id="our_ref" class="placeholder">[OUR_REF]</span></strong></div>
-                <div>Your Ref: <strong><span id="your_ref" class="placeholder">[YOUR_REF]</span></strong></div>
+            <div class="center-seal">
+                <div class="government-seal"></div>
+                <div class="seal-motto">UNITY • WORK • PROGRESS</div>
             </div>
             
-            <div class="date-section">
-                <strong><span id="date" class="placeholder">[DATE]</span></strong>
+            <div class="right-info">
+                <p><strong>Ibeno Local Government</strong></p>
+                <p class="address-line">Local Government Secretariat</p>
+                <p class="address-line">Upenekang Town</p>
+                <p class="address-line">Akwa Ibom State</p>
+                <p class="date-line" id="date">{{date}}</p>
             </div>
-            
-            <div class="cert-number">
-                <span id="certificate_number" class="placeholder">[CERTIFICATE_NUMBER]</span>
-            </div>
-            
-            <div class="title">Certificate of Origin</div>
-            
-            <div class="content">
-                <div class="formal-text">This is to formally certify that:</div>
-                
-                <div class="bearer-info">
-                    The bearer <span class="bearer-name" id="bearer_name">[BEARER_NAME]</span>
+        </div>
+
+        <div class="title">Certificate of Origin</div>
+
+        <div class="content">
+            <p>This is to formally certify that:</p>
+
+            <p>The bearer <strong id="bearer_name">{{full_name}}</strong> is a native of Ekpuk <strong id="native_of">{{clan}}</strong> in <strong id="village">{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+
+            <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+        </div>
+
+        <div class="footer">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div class="qr-code" id="qr_code_placeholder">
+                    <div>QR CODE<br>VERIFY</div>
                 </div>
-                
-                <div class="bearer-info">
-                    is a native of <span class="location-info" id="native_of">[NATIVE_OF]</span> in
-                </div>
-                
-                <div class="bearer-info">
-                    <span class="location-info" id="village">[VILLAGE]</span> Village, and recognized indigene of Ibeno
-                </div>
-                
-                <div class="bearer-info">
-                    Local Government Area, Akwa Ibom State.
-                </div>
-                
-                <div class="footer-content">
-                    The bearer is therefore entitled to all the rights, recognition, and assistance 
-                    that come with being a native of this esteemed locality.
-                </div>
-            </div>
-            
-            <div class="qr-code-section" id="qr_code_placeholder">
-                <div style="text-align: center; font-size: 8pt; color: #666;">
-                    QR Code<br>Placeholder
-                </div>
-            </div>
-            
-            <div class="red-seal"></div>
-            
-            <div class="signature-section">
-                <div class="signature-box"></div>
-                <div class="signature-text">
-                    <div class="signature-name">Executive Chairman</div>
-                    <div class="signature-title">Ibeno Local Government</div>
+                <div class="official-seal"></div>
+                <div class="signature">
+                    Executive Chairman<br>
+                    Ibeno Local Government
                 </div>
             </div>
         </div>
     </div>
-
+    
     <script>
         /**
          * Populates the certificate template with dynamic data
          * @param {Object} data - Certificate data object
          */
         function populateCertificateTemplate(data) {
-            // Populate reference numbers and date
-            if (data.ourRef) {
-                document.getElementById("our_ref").textContent = data.ourRef;
-            }
-            if (data.yourRef) {
-                document.getElementById("your_ref").textContent = data.yourRef;
+            // Populate reference number and date
+            if (data.refNumber) {
+                document.getElementById("ref_number").textContent = data.refNumber;
             }
             if (data.date) {
                 document.getElementById("date").textContent = data.date;
-            }
-            if (data.certificateNumber) {
-                document.getElementById("certificate_number").textContent = data.certificateNumber;
             }
 
             // Populate bearer details
@@ -436,10 +424,8 @@
         // Example usage (this would be called from your main application):
         /*
         const sampleData = {
-            ourRef: "ILG/AD/G/304/2024",
-            yourRef: "NO1.42/78/2024",
+            refNumber: "ILG/AD/G/304/2024",
             date: "28th JULY 2025",
-            certificateNumber: "PNG 00725 1",
             bearerName: "ELISHA EMMANUEL DAVID",
             nativeOf: "USUNG ANSE UTIARUK",
             village: "UPENEKANG",
