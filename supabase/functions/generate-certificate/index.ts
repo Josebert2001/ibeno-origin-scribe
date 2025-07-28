@@ -354,50 +354,13 @@ serve(async (req) => {
     </html>
     `;
 
-    // Convert HTML to PDF using Puppeteer via external service
-    const pdfResponse = await fetch('https://api.html-pdf-node.com/pdf', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        html: certificateHTML,
-        options: {
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '0px',
-            right: '0px',
-            bottom: '0px',
-            left: '0px'
-          }
-        }
-      })
-    });
-
-    if (!pdfResponse.ok) {
-      // Fallback: return HTML content if PDF generation fails
-      return new Response(
-        JSON.stringify({ 
-          html: certificateHTML,
-          qrCode,
-          message: 'PDF generation service unavailable, returning HTML template'
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    const pdfBuffer = await pdfResponse.arrayBuffer();
-    const base64PDF = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
-
+    // Return HTML template for browser-based PDF generation
     return new Response(
       JSON.stringify({ 
-        pdf: `data:application/pdf;base64,${base64PDF}`,
         html: certificateHTML,
         qrCode,
-        certificateNumber: certificateData.certificateNumber
+        certificateNumber: certificateData.certificateNumber,
+        success: true
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

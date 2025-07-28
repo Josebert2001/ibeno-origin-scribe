@@ -81,6 +81,16 @@ const CertificateForm = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const printCertificate = (html: string) => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    }
+  };
   const onSubmit = async (data: CertificateFormData) => {
     setLoading(true);
     try {
@@ -140,7 +150,7 @@ const CertificateForm = () => {
         native_of: data.nativeOf,
         village: data.village,
         qr_code_data: qrCodeData,
-        certificate_file_url: certificateData.pdf ? `certificate_${certificateNumber}.pdf` : null,
+        certificate_file_url: `certificate_${certificateNumber}.html`,
         created_by: user.id
       }).select().single();
       if (insertError) {
@@ -278,10 +288,16 @@ const CertificateForm = () => {
       {generatedCertificate && <div className="border rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-green-800">Certificate Generated Successfully!</h3>
-            {generatedCertificate.pdf && <Button onClick={() => downloadPDF(generatedCertificate.pdf!, `certificate_${generatedCertificate.certificateNumber}.pdf`)} className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Download PDF
-              </Button>}
+            <div className="flex gap-2">
+              {generatedCertificate.pdf && <Button onClick={() => downloadPDF(generatedCertificate.pdf!, `certificate_${generatedCertificate.certificateNumber}.pdf`)} className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download PDF
+                </Button>}
+              {generatedCertificate.html && <Button onClick={() => printCertificate(generatedCertificate.html)} variant="outline" className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Print Certificate
+                </Button>}
+            </div>
           </div>
           
           <div className="bg-muted/30 p-4 rounded">
@@ -302,10 +318,9 @@ const CertificateForm = () => {
               </div>
             </div>}
 
-          {!generatedCertificate.pdf && generatedCertificate.html && <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
-              <p className="text-sm text-yellow-800">
-                PDF generation service is currently unavailable. The certificate has been created 
-                successfully and can be verified, but the printable PDF is not available at this time.
+          {!generatedCertificate.pdf && generatedCertificate.html && <div className="bg-blue-50 border border-blue-200 rounded p-4">
+              <p className="text-sm text-blue-800">
+                Certificate generated successfully! Use the "Print Certificate" button above to print or save as PDF using your browser's print function.
               </p>
             </div>}
         </div>}
