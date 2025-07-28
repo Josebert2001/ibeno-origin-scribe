@@ -364,11 +364,11 @@
             }
 
             // Populate bearer details
-            if (data.bearerName) {
-                document.getElementById("bearer_name").textContent = data.bearerName;
+            if (data.full_name) {
+                document.getElementById("bearer_name").textContent = data.full_name;
             }
-            if (data.nativeOf) {
-                document.getElementById("native_of").textContent = data.nativeOf;
+            if (data.clan) {
+                document.getElementById("native_of").textContent = data.clan;
             }
             if (data.village) {
                 document.getElementById("village").textContent = data.village;
@@ -426,8 +426,8 @@
         const sampleData = {
             refNumber: "ILG/AD/G/304/2024",
             date: "28th JULY 2025",
-            bearerName: "ELISHA EMMANUEL DAVID",
-            nativeOf: "USUNG ANSE UTIARUK",
+            full_name: "ELISHA EMMANUEL DAVID",
+            clan: "USUNG ANSE UTIARUK",
             village: "UPENEKANG",
             qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADI..."
         };
