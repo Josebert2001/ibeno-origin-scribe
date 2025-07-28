@@ -88,7 +88,16 @@ const CertificateForm = () => {
       printWindow.document.write(html);
       printWindow.document.close();
       printWindow.focus();
-      printWindow.print();
+      
+      // Wait for the document to load before printing
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+      
+      // Fallback for browsers that don't support onload
+      setTimeout(() => {
+        printWindow.print();
+      }, 1000);
     }
   };
   const onSubmit = async (data: CertificateFormData) => {
