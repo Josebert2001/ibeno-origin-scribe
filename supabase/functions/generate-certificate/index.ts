@@ -26,21 +26,18 @@ serve(async (req) => {
   try {
     const certificateData: CertificateData = await req.json();
 
-    // First, generate QR code
-    const qrResponse = await fetch(`${req.url.split('/functions')[0]}/functions/v1/generate-qr-code`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': req.headers.get('Authorization') || '',
-      },
-      body: JSON.stringify({ text: certificateData.qrCodeData, size: 150 })
-    });
-
+    // First, generate QR code using QR Server API directly
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(certificateData.qrCodeData)}&format=png`;
+    
+    const qrResponse = await fetch(qrUrl);
+    
     if (!qrResponse.ok) {
-      throw new Error('Failed to generate QR code');
+      throw new Error('Failed to generate QR code from external service');
     }
 
-    const { qrCode } = await qrResponse.json();
+    const qrImageBuffer = await qrResponse.arrayBuffer();
+    const base64QR = btoa(String.fromCharCode(...new Uint8Array(qrImageBuffer)));
+    const qrCode = `data:image/png;base64,${base64QR}`;
 
     // Format the date for display
     const dateFormatted = new Date(certificateData.dateIssued).toLocaleDateString('en-GB', {
