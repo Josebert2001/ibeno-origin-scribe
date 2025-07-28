@@ -56,180 +56,302 @@ serve(async (req) => {
     <head>
         <meta charset="UTF-8">
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Times+New+Roman:wght@400;700&display=swap');
             @page {
                 size: A4;
                 margin: 0;
             }
             body {
                 margin: 0;
-                padding: 20px;
+                padding: 0;
                 font-family: 'Times New Roman', serif;
                 background: white;
-                width: 794px;
-                height: 1123px;
+                width: 210mm;
+                height: 297mm;
                 position: relative;
-                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="794" height="1123"><defs><pattern id="border" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="none" stroke="%23228B22" stroke-width="2"/></pattern></defs><rect width="794" height="1123" fill="url(%23border)" opacity="0.1"/></svg>');
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             .certificate-container {
-                border: 8px solid #228B22;
-                border-radius: 15px;
-                padding: 40px;
-                height: calc(100% - 80px);
+                width: 190mm;
+                height: 270mm;
                 position: relative;
                 background: white;
+                border: 12px solid #0B7B3E;
+                border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ornate" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2" fill="%230B7B3E"/><path d="M0,5 Q5,0 10,5 Q5,10 0,5" fill="none" stroke="%230B7B3E" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23ornate)"/></svg>') 12 repeat;
+                padding: 20mm;
+                box-sizing: border-box;
+            }
+            .ornate-border {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border: 8px solid #0B7B3E;
+                border-radius: 8px;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    #0B7B3E 2px,
+                    #0B7B3E 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    #0B7B3E 2px,
+                    #0B7B3E 4px
+                );
+                opacity: 0.3;
+            }
+            .inner-content {
+                position: relative;
+                z-index: 2;
+                height: 100%;
+                background: white;
+                padding: 15mm;
+                border: 2px solid #0B7B3E;
+                border-radius: 4px;
             }
             .header {
                 text-align: center;
-                margin-bottom: 30px;
+                margin-bottom: 15mm;
+                position: relative;
+            }
+            .coat-of-arms {
+                position: absolute;
+                top: -5mm;
+                left: 10mm;
+                width: 20mm;
+                height: 20mm;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FFD700" stroke="%23000" stroke-width="2"/><text x="50" y="55" text-anchor="middle" font-size="12" font-weight="bold">NIGERIA</text></svg>') no-repeat center center;
+                background-size: contain;
+            }
+            .govt-seal {
+                position: absolute;
+                top: -5mm;
+                right: 10mm;
+                width: 20mm;
+                height: 20mm;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%230B7B3E" stroke="%23000" stroke-width="2"/><text x="50" y="45" text-anchor="middle" font-size="8" font-weight="bold" fill="white">IBENO</text><text x="50" y="60" text-anchor="middle" font-size="6" fill="white">LOCAL GOVT</text></svg>') no-repeat center center;
+                background-size: contain;
             }
             .header h1 {
-                font-size: 28px;
+                font-size: 24pt;
                 font-weight: bold;
-                color: #228B22;
+                color: #0B7B3E;
                 margin: 0;
                 text-transform: uppercase;
-                letter-spacing: 2px;
+                letter-spacing: 3px;
+                line-height: 1.2;
             }
             .header .state {
-                font-size: 16px;
-                color: #228B22;
-                margin: 5px 0;
+                font-size: 14pt;
+                color: #0B7B3E;
+                margin: 2mm 0;
                 font-weight: bold;
+                text-transform: uppercase;
             }
-            .header .motto {
-                font-size: 14px;
-                color: #228B22;
-                font-style: italic;
-                margin: 10px 0;
+            .header .location {
+                font-size: 11pt;
+                color: #000;
+                margin: 1mm 0;
             }
             .refs {
                 display: flex;
                 justify-content: space-between;
-                margin: 20px 0;
-                font-size: 14px;
+                margin: 8mm 0;
+                font-size: 11pt;
             }
-            .date-number {
-                text-align: center;
-                margin: 30px 0;
+            .refs div {
+                min-width: 60mm;
             }
-            .date {
-                font-size: 16px;
-                margin-bottom: 20px;
+            .date-section {
+                text-align: right;
+                margin: 8mm 0;
+                font-size: 11pt;
             }
             .cert-number {
-                font-size: 24px;
+                text-align: center;
+                font-size: 18pt;
                 font-weight: bold;
-                color: #228B22;
-                margin-bottom: 10px;
+                color: #000;
+                margin: 5mm 0;
+                letter-spacing: 2px;
             }
             .title {
                 text-align: center;
-                font-size: 32px;
-                font-weight: bold;
-                color: #228B22;
-                text-decoration: underline;
-                margin: 30px 0;
-                text-transform: uppercase;
+                font-family: 'Dancing Script', cursive;
+                font-size: 36pt;
+                font-weight: 700;
+                color: #1E90FF;
+                margin: 8mm 0;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             }
             .content {
-                font-size: 18px;
-                line-height: 2;
+                font-size: 12pt;
+                line-height: 1.8;
+                text-align: justify;
+                margin: 10mm 0;
+                color: #000;
+            }
+            .content .formal-text {
                 text-align: center;
-                margin: 40px 0;
+                margin-bottom: 8mm;
+                font-weight: bold;
+            }
+            .bearer-info {
+                margin: 8mm 0;
+                line-height: 2.2;
             }
             .bearer-name {
+                border-bottom: 2px dotted #000;
+                min-width: 80mm;
+                display: inline-block;
+                text-align: center;
                 font-weight: bold;
                 text-transform: uppercase;
-                font-size: 20px;
-                text-decoration: underline;
+                padding: 1mm 3mm;
             }
-            .location {
+            .location-info {
+                border-bottom: 2px dotted #000;
+                min-width: 60mm;
+                display: inline-block;
+                text-align: center;
                 font-weight: bold;
+                padding: 1mm 3mm;
+            }
+            .footer-content {
+                margin-top: 8mm;
+                text-align: justify;
+                line-height: 1.6;
             }
             .signature-section {
                 position: absolute;
-                bottom: 60px;
-                right: 60px;
+                bottom: 15mm;
+                right: 20mm;
                 text-align: center;
+                width: 50mm;
             }
-            .qr-code {
-                position: absolute;
-                bottom: 180px;
-                right: 60px;
-                width: 120px;
-                height: 120px;
+            .signature-box {
+                width: 45mm;
+                height: 20mm;
+                border: 2px solid #000;
+                margin-bottom: 3mm;
+                background: white;
             }
-            .qr-code img {
-                width: 100%;
-                height: 100%;
+            .signature-text {
+                font-size: 10pt;
+                line-height: 1.3;
             }
             .signature-name {
                 font-weight: bold;
-                font-size: 16px;
-                margin-top: 20px;
-                border-top: 2px solid #000;
-                padding-top: 5px;
+                margin-bottom: 1mm;
             }
             .signature-title {
-                font-size: 14px;
-                color: #228B22;
+                font-size: 9pt;
+                color: #0B7B3E;
                 font-weight: bold;
             }
-            .footer-motto {
+            .red-seal {
                 position: absolute;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                font-size: 14px;
-                color: #228B22;
-                font-weight: bold;
-                text-transform: uppercase;
+                bottom: 15mm;
+                left: 20mm;
+                width: 25mm;
+                height: 25mm;
+                background: radial-gradient(circle, #FF0000 0%, #CC0000 70%, #AA0000 100%);
+                border-radius: 50%;
+                border: 3px solid #AA0000;
+                box-shadow: 0 0 10px rgba(255,0,0,0.5);
+            }
+            .qr-code {
+                position: absolute;
+                bottom: 50mm;
+                right: 20mm;
+                width: 25mm;
+                height: 25mm;
+                border: 1px solid #ccc;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .qr-code img {
+                width: 95%;
+                height: 95%;
+                object-fit: contain;
             }
         </style>
     </head>
     <body>
         <div class="certificate-container">
-            <div class="header">
-                <h1>Ibeno Local Government</h1>
-                <div class="state">Akwa Ibom State</div>
-                <div>Local Government Office</div>
-                <div>Upenekang Town</div>
-                <div class="motto">Unity and Labour</div>
-            </div>
-            
-            <div class="refs">
-                <div>Our Ref: <strong>${certificateData.ourRef}</strong></div>
-                <div>Your Ref: <strong>${certificateData.yourRef}</strong></div>
-            </div>
-            
-            <div class="date-number">
-                <div class="date">${dateFormatted}</div>
+            <div class="ornate-border"></div>
+            <div class="inner-content">
+                <div class="coat-of-arms"></div>
+                <div class="govt-seal"></div>
+                
+                <div class="header">
+                    <h1>Ibeno Local Government</h1>
+                    <div class="state">Akwa Ibom State</div>
+                    <div class="location">Ibeno Secretariat,</div>
+                    <div class="location">Upenekang Town</div>
+                </div>
+                
+                <div class="refs">
+                    <div>Our Ref: <strong>${certificateData.ourRef}</strong></div>
+                    <div>Your Ref: <strong>${certificateData.yourRef}</strong></div>
+                </div>
+                
+                <div class="date-section">
+                    <strong>${dateFormatted}</strong>
+                </div>
+                
                 <div class="cert-number">${certificateData.certificateNumber}</div>
+                
+                <div class="title">Certificate of Origin</div>
+                
+                <div class="content">
+                    <div class="formal-text">This is to formally certify that:</div>
+                    
+                    <div class="bearer-info">
+                        The bearer <span class="bearer-name">${certificateData.bearerName}</span>
+                    </div>
+                    
+                    <div class="bearer-info">
+                        is a native of <span class="location-info">${certificateData.nativeOf}</span> in
+                    </div>
+                    
+                    <div class="bearer-info">
+                        <span class="location-info">${certificateData.village}</span> Village, and recognized indigene of Ibeno
+                    </div>
+                    
+                    <div class="bearer-info">
+                        Local Government Area, Akwa Ibom State.
+                    </div>
+                    
+                    <div class="footer-content">
+                        The bearer is therefore entitled to all the rights, recognition, and assistance 
+                        that come with being a native of this esteemed locality.
+                    </div>
+                </div>
+                
+                <div class="qr-code">
+                    <img src="${qrCode}" alt="QR Code" />
+                </div>
+                
+                <div class="red-seal"></div>
+                
+                <div class="signature-section">
+                    <div class="signature-box"></div>
+                    <div class="signature-text">
+                        <div class="signature-name">Executive Chairman</div>
+                        <div class="signature-title">Ibeno Local Government</div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="title">Certificate of Origin</div>
-            
-            <div class="content">
-                This is to Certify that<br><br>
-                The bearer, <span class="bearer-name">${certificateData.bearerName}</span><br><br>
-                is a native of <span class="location">${certificateData.nativeOf}</span><br><br>
-                in <span class="location">${certificateData.village}</span> Village, and<br><br>
-                therefore an indigene of Ibeno Local Government Area. You are please<br>
-                requested to give him/her every possible assistance.
-            </div>
-            
-            <div class="qr-code">
-                <img src="${qrCode}" alt="QR Code" />
-            </div>
-            
-            <div class="signature-section">
-                <div style="width: 200px; height: 60px; border-bottom: 2px solid #000; margin-bottom: 10px;"></div>
-                <div class="signature-name">JOHN TOLOM</div>
-                <div class="signature-title">Executive Chairman</div>
-                <div class="signature-title">Ibeno Local Government</div>
-            </div>
-            
-            <div class="footer-motto">Unity and Labour</div>
         </div>
     </body>
     </html>
