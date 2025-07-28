@@ -14,13 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      certificates: {
+        Row: {
+          bearer_name: string
+          certificate_file_url: string | null
+          certificate_number: string
+          created_at: string
+          created_by: string | null
+          date_issued: string
+          id: string
+          native_of: string
+          our_ref: string
+          qr_code_data: string
+          status: string
+          updated_at: string
+          village: string
+          your_ref: string
+        }
+        Insert: {
+          bearer_name: string
+          certificate_file_url?: string | null
+          certificate_number: string
+          created_at?: string
+          created_by?: string | null
+          date_issued?: string
+          id?: string
+          native_of: string
+          our_ref: string
+          qr_code_data: string
+          status?: string
+          updated_at?: string
+          village: string
+          your_ref: string
+        }
+        Update: {
+          bearer_name?: string
+          certificate_file_url?: string | null
+          certificate_number?: string
+          created_at?: string
+          created_by?: string | null
+          date_issued?: string
+          id?: string
+          native_of?: string
+          our_ref?: string
+          qr_code_data?: string
+          status?: string
+          updated_at?: string
+          village?: string
+          your_ref?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_certificate_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_our_ref: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_your_ref: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
