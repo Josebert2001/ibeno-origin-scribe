@@ -66,28 +66,8 @@
         }
 
         .certificate-container::after {
-            content: 'ORIGINAL • OFFICIAL • VERIFIED • SECURE • AUTHENTIC • ORIGINAL • OFFICIAL • VERIFIED • SECURE • AUTHENTIC • ORIGINAL • OFFICIAL • VERIFIED • SECURE • AUTHENTIC • ';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: linear-gradient(90deg, #00a650, #00aeef, #00a650);
-            color: white;
-            font-size: 8px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            white-space: nowrap;
-            animation: scroll-text 30s linear infinite;
-            z-index: 10;
-        }
-
-        @keyframes scroll-text {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            content: '';
+            display: none;
         }
         
         .header {
