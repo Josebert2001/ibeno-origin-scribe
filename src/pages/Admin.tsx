@@ -4,9 +4,11 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogOut, FileText, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CertificateForm from "@/components/CertificateForm";
+import CertificatesDashboard from "@/components/CertificatesDashboard";
 
 const Admin = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -101,17 +103,41 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle>Issue Certificate of Origin</CardTitle>
-            <CardDescription>
-              Fill out the form below to generate a new Certificate of Origin
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CertificateForm />
-          </CardContent>
-        </Card>
+        <div className="max-w-7xl mx-auto">
+          <Tabs defaultValue="create" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+              <TabsTrigger value="create" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Create Certificate
+              </TabsTrigger>
+              <TabsTrigger value="dashboard" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                View Dashboard
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="create">
+              <Card className="max-w-4xl mx-auto">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Issue Certificate of Origin
+                  </CardTitle>
+                  <CardDescription>
+                    Fill out the form below to generate a new Certificate of Origin
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CertificateForm />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="dashboard">
+              <CertificatesDashboard />
+            </TabsContent>
+          </Tabs>
+        </div>
       </main>
     </div>
   );
