@@ -68,8 +68,8 @@ serve(async (req) => {
       .replace(/{{yourRef}}/g, certificateData.yourRef)
       .replace(/{{date}}/g, dateFormatted)
       .replace(/{{certificateNumber}}/g, certificateData.certificateNumber)
-      .replace(/{{bearerName}}/g, certificateData.bearerName)
-      .replace(/{{nativeOf}}/g, certificateData.nativeOf)
+      .replace(/{{full_name}}/g, certificateData.bearerName)
+      .replace(/{{clan}}/g, certificateData.nativeOf)
       .replace(/{{village}}/g, certificateData.village)
       .replace(/{{qrCode}}/g, qrCode);
 
