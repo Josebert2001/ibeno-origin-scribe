@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, FileText, BarChart3, Shield, User } from "lucide-react";
+import { LogOut, FileText, BarChart3, Shield, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CertificateForm from "@/components/CertificateForm";
 import CertificatesDashboard from "@/components/CertificatesDashboard";
@@ -99,7 +99,7 @@ const Admin = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
-              <User className="w-4 h-4 text-green-600" />
+              <UserIcon className="w-4 h-4 text-green-600" />
               <span className="text-sm font-medium text-green-700 dark:text-green-300">
                 {user.email}
               </span>
