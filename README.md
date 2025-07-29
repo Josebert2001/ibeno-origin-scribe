@@ -1,5 +1,9 @@
 # Ibeno Origin Scribe
 
+<div align="center">
+  <img src="public/logo.png" alt="Ibeno Origin Scribe Logo" width="200"/>
+</div>
+
 A modern certificate generation and verification system for authenticating Ibeno community membership and origin.
 
 ## About
