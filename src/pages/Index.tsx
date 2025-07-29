@@ -246,10 +246,10 @@ const Index = () => {
             </span>
           </div>
           <p className="text-green-600 dark:text-green-400 mb-2">
-            Certificate of Origin Portal
+            Ibeno Local Government Area
           </p>
           <p className="text-sm text-green-500 dark:text-green-500">
-            Unity and Labour - Akwa Ibom State
+            Certificate of Origin Portal
           </p>
         </footer>
       </main>
