@@ -16,9 +16,21 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { cn } from "@/lib/utils";
 
 const certificateSchema = z.object({
-  bearerName: z.string().min(2, "Bearer name must be at least 2 characters"),
-  nativeOf: z.string().min(2, "Native of must be at least 2 characters"),
-  village: z.string().min(2, "Village must be at least 2 characters"),
+  bearerName: z.string()
+    .min(2, "Bearer name must be at least 2 characters")
+    .max(100, "Bearer name must not exceed 100 characters")
+    .regex(/^[a-zA-Z\s\-'\.]+$/, "Bearer name can only contain letters, spaces, hyphens, apostrophes, and periods")
+    .refine(val => !/<[^>]*>/.test(val), "HTML tags are not allowed"),
+  nativeOf: z.string()
+    .min(2, "Native of must be at least 2 characters")
+    .max(100, "Native of must not exceed 100 characters")
+    .regex(/^[a-zA-Z\s\-'\.]+$/, "Native of can only contain letters, spaces, hyphens, apostrophes, and periods")
+    .refine(val => !/<[^>]*>/.test(val), "HTML tags are not allowed"),
+  village: z.string()
+    .min(2, "Village must be at least 2 characters")
+    .max(100, "Village must not exceed 100 characters")
+    .regex(/^[a-zA-Z\s\-'\.]+$/, "Village can only contain letters, spaces, hyphens, apostrophes, and periods")
+    .refine(val => !/<[^>]*>/.test(val), "HTML tags are not allowed"),
   dateIssued: z.date({
     required_error: "Date is required"
   })
