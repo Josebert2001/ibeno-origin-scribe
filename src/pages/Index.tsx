@@ -24,6 +24,9 @@ const Index = () => {
                     ibnOrigin
                   </h1>
                   <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                    Ibeno Local Government
+                  </p>
+                  <p className="text-xs text-green-500 dark:text-green-500">
                     Certificate of Origin Portal
                   </p>
                 </div>
