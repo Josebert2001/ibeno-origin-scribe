@@ -70,6 +70,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_bearer_certificate_exists: {
+        Args: { bearer_name_input: string }
+        Returns: boolean
+      }
       generate_certificate_number: {
         Args: Record<PropertyKey, never>
         Returns: string
