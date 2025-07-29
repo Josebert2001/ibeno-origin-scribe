@@ -31,7 +31,10 @@ import {
   AlertTriangle,
   MoreVertical,
   Trash2,
-  Edit
+  Edit,
+  Download,
+  Printer,
+  Loader2
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -52,6 +55,8 @@ interface Certificate {
 const CertificatesDashboard = () => {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingCerts, setDownloadingCerts] = useState<Set<string>>(new Set());
+  const [printingCerts, setPrintingCerts] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const { toast } = useToast();
@@ -168,6 +173,121 @@ const CertificatesDashboard = () => {
   // View certificate (redirect to verification page)
   const handleViewCertificate = (certificateNumber: string) => {
     window.open(`/verify?cert_id=${certificateNumber}`, '_blank');
+  };
+
+  // Download certificate as HTML
+  const handleDownloadCertificate = async (cert: Certificate) => {
+    const certId = cert.certificate_number;
+    
+    try {
+      setDownloadingCerts(prev => new Set(prev).add(certId));
+      
+      const qrCodeData = `${window.location.origin}/verify?cert_id=${certId}`;
+      
+      const { data, error } = await supabase.functions.invoke('generate-certificate', {
+        body: {
+          ourRef: cert.our_ref,
+          yourRef: cert.your_ref,
+          dateIssued: cert.date_issued,
+          certificateNumber: cert.certificate_number,
+          bearerName: cert.bearer_name,
+          nativeOf: cert.native_of,
+          village: cert.village,
+          qrCodeData
+        }
+      });
+
+      if (error) throw error;
+
+      // Create and download HTML file
+      const blob = new Blob([data.html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `certificate_${certId}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download Complete",
+        description: `Certificate ${certId} downloaded successfully`,
+      });
+    } catch (error: any) {
+      console.error('Download error:', error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download certificate",
+        variant: "destructive"
+      });
+    } finally {
+      setDownloadingCerts(prev => {
+        const updated = new Set(prev);
+        updated.delete(certId);
+        return updated;
+      });
+    }
+  };
+
+  // Print certificate
+  const handlePrintCertificate = async (cert: Certificate) => {
+    const certId = cert.certificate_number;
+    
+    try {
+      setPrintingCerts(prev => new Set(prev).add(certId));
+      
+      const qrCodeData = `${window.location.origin}/verify?cert_id=${certId}`;
+      
+      const { data, error } = await supabase.functions.invoke('generate-certificate', {
+        body: {
+          ourRef: cert.our_ref,
+          yourRef: cert.your_ref,
+          dateIssued: cert.date_issued,
+          certificateNumber: cert.certificate_number,
+          bearerName: cert.bearer_name,
+          nativeOf: cert.native_of,
+          village: cert.village,
+          qrCodeData
+        }
+      });
+
+      if (error) throw error;
+
+      // Open print window
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(data.html);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+        
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      }
+
+      toast({
+        title: "Print Ready",
+        description: `Certificate ${certId} opened for printing`,
+      });
+    } catch (error: any) {
+      console.error('Print error:', error);
+      toast({
+        title: "Print Failed",
+        description: "Failed to prepare certificate for printing",
+        variant: "destructive"
+      });
+    } finally {
+      setPrintingCerts(prev => {
+        const updated = new Set(prev);
+        updated.delete(certId);
+        return updated;
+      });
+    }
   };
 
   if (loading) {
@@ -336,48 +456,80 @@ const CertificatesDashboard = () => {
                             <span className="ml-1">{statusDisplay.label}</span>
                           </Badge>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleViewCertificate(cert.certificate_number)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  onClick={() => handleStatusChange(cert.id, 'valid')}
-                                  disabled={cert.status === 'valid'}
-                                >
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Mark as Valid
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleStatusChange(cert.id, 'revoked')}
-                                  disabled={cert.status === 'revoked'}
-                                >
-                                  <XCircle className="h-4 w-4 mr-2" />
-                                  Mark as Revoked
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleStatusChange(cert.id, 'superseded')}
-                                  disabled={cert.status === 'superseded'}
-                                >
-                                  <AlertTriangle className="h-4 w-4 mr-2" />
-                                  Mark as Superseded
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </TableCell>
+                         <TableCell>
+                           <div className="flex items-center justify-center gap-1">
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => handleViewCertificate(cert.certificate_number)}
+                               className="h-8 w-8 p-0"
+                               title="View Certificate"
+                             >
+                               <Eye className="h-4 w-4" />
+                             </Button>
+                             
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => handleDownloadCertificate(cert)}
+                               disabled={downloadingCerts.has(cert.certificate_number)}
+                               className="h-8 w-8 p-0"
+                               title="Download Certificate"
+                             >
+                               {downloadingCerts.has(cert.certificate_number) ? (
+                                 <Loader2 className="h-4 w-4 animate-spin" />
+                               ) : (
+                                 <Download className="h-4 w-4" />
+                               )}
+                             </Button>
+                             
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => handlePrintCertificate(cert)}
+                               disabled={printingCerts.has(cert.certificate_number)}
+                               className="h-8 w-8 p-0"
+                               title="Print Certificate"
+                             >
+                               {printingCerts.has(cert.certificate_number) ? (
+                                 <Loader2 className="h-4 w-4 animate-spin" />
+                               ) : (
+                                 <Printer className="h-4 w-4" />
+                               )}
+                             </Button>
+                             
+                             <DropdownMenu>
+                               <DropdownMenuTrigger asChild>
+                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                   <MoreVertical className="h-4 w-4" />
+                                 </Button>
+                               </DropdownMenuTrigger>
+                               <DropdownMenuContent align="end">
+                                 <DropdownMenuItem
+                                   onClick={() => handleStatusChange(cert.id, 'valid')}
+                                   disabled={cert.status === 'valid'}
+                                 >
+                                   <CheckCircle className="h-4 w-4 mr-2" />
+                                   Mark as Valid
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem
+                                   onClick={() => handleStatusChange(cert.id, 'revoked')}
+                                   disabled={cert.status === 'revoked'}
+                                 >
+                                   <XCircle className="h-4 w-4 mr-2" />
+                                   Mark as Revoked
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem
+                                   onClick={() => handleStatusChange(cert.id, 'superseded')}
+                                   disabled={cert.status === 'superseded'}
+                                 >
+                                   <AlertTriangle className="h-4 w-4 mr-2" />
+                                   Mark as Superseded
+                                 </DropdownMenuItem>
+                               </DropdownMenuContent>
+                             </DropdownMenu>
+                           </div>
+                         </TableCell>
                       </TableRow>
                     );
                   })
