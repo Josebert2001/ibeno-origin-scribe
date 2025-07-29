@@ -106,7 +106,7 @@ const CertificateForm = () => {
     }
   }, []);
 
-  // Optimized form submission
+  // Optimized form submission with duplicate check
   const onSubmit = useCallback(async (data: CertificateFormData) => {
     setLoading(true);
     try {
@@ -116,6 +116,23 @@ const CertificateForm = () => {
         toast({
           title: "Error",
           description: "You must be logged in to create certificates",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if bearer already has a certificate this year
+      const { data: existingCert, error: checkError } = await supabase
+        .rpc('check_bearer_certificate_exists', { bearer_name_input: data.bearerName });
+      
+      if (checkError) {
+        throw new Error('Failed to check for existing certificates');
+      }
+      
+      if (existingCert) {
+        toast({
+          title: "Certificate Already Exists",
+          description: `A valid certificate for "${data.bearerName}" already exists for ${new Date().getFullYear()}. Each person can only have one certificate per year.`,
           variant: "destructive"
         });
         return;
