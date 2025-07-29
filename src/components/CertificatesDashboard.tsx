@@ -20,14 +20,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { 
-  Search, 
-  Eye, 
-  FileText, 
-  Calendar, 
-  Users, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Search,
+  Eye,
+  FileText,
+  Calendar,
+  Users,
+  CheckCircle,
+  XCircle,
   AlertTriangle,
   MoreVertical,
   Trash2,
@@ -291,6 +291,36 @@ const CertificatesDashboard = () => {
     }
   };
 
+  // Delete certificate
+  const handleDeleteCertificate = async (cert: Certificate) => {
+    if (!confirm(`Are you sure you want to delete certificate ${cert.certificate_number}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('certificates')
+        .delete()
+        .eq('id', cert.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Certificate Deleted",
+        description: `Certificate ${cert.certificate_number} has been deleted successfully`,
+      });
+
+      fetchCertificates();
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete certificate",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -524,10 +554,17 @@ const CertificatesDashboard = () => {
                                    onClick={() => handleStatusChange(cert.id, 'superseded')}
                                    disabled={cert.status === 'superseded'}
                                  >
-                                   <AlertTriangle className="h-4 w-4 mr-2" />
-                                   Mark as Superseded
-                                 </DropdownMenuItem>
-                               </DropdownMenuContent>
+                                    <AlertTriangle className="h-4 w-4 mr-2" />
+                                    Mark as Superseded
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleDeleteCertificate(cert)}
+                                    className="text-red-600 focus:text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete Certificate
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
                              </DropdownMenu>
                            </div>
                          </TableCell>
