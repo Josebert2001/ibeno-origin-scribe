@@ -213,11 +213,19 @@ const CertificateForm = () => {
 
       const certificateData = certificateGenResponse.data;
       
-      // Update database with storage URL if available
+      // Update database with storage URLs if available
+      const updateData: any = {};
       if (certificateData.htmlUrl) {
+        updateData.certificate_html_url = certificateData.htmlUrl;
+      }
+      if (certificateData.pdfUrl) {
+        updateData.certificate_pdf_url = certificateData.pdfUrl;
+      }
+      
+      if (Object.keys(updateData).length > 0) {
         await supabase
           .from('certificates')
-          .update({ certificate_html_url: certificateData.htmlUrl })
+          .update(updateData)
           .eq('certificate_number', certificateNumber);
       }
       

@@ -158,32 +158,91 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     let htmlUrl = null;
+    let pdfUrl = null;
     
     if (supabaseUrl && supabaseServiceKey) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       
       try {
         // Save HTML file to storage
-        const fileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.html`;
-        const filePath = `${new Date().getFullYear()}/${fileName}`;
+        const htmlFileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.html`;
+        const htmlFilePath = `${new Date().getFullYear()}/${htmlFileName}`;
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: htmlUploadData, error: htmlUploadError } = await supabase.storage
           .from('certificates')
-          .upload(filePath, new Blob([certificateHTML], { type: 'text/html' }), {
+          .upload(htmlFilePath, new Blob([certificateHTML], { type: 'text/html' }), {
             contentType: 'text/html',
             upsert: true
           });
 
-        if (uploadError) {
-          console.error('Storage upload error:', uploadError);
+        if (htmlUploadError) {
+          console.error('HTML storage upload error:', htmlUploadError);
         } else {
-          // Get public URL
-          const { data: urlData } = supabase.storage
+          // Get public URL for HTML
+          const { data: htmlUrlData } = supabase.storage
             .from('certificates')
-            .getPublicUrl(filePath);
+            .getPublicUrl(htmlFilePath);
           
-          htmlUrl = urlData.publicUrl;
-          console.log('Certificate saved to storage:', htmlUrl);
+          htmlUrl = htmlUrlData.publicUrl;
+          console.log('Certificate HTML saved to storage:', htmlUrl);
+        }
+
+        // Generate PDF using HTMLCSStoImage API
+        try {
+          const response = await fetch('https://htmlcsstoimage.com/demo_run', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              html: certificateHTML,
+              css: '',
+              google_fonts: 'Georgia',
+              format: 'pdf',
+              width: 595,
+              height: 842,
+              device_scale_factor: 2,
+              render_when_ready: false,
+              viewport_width: 595,
+              viewport_height: 842
+            })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            if (result.url) {
+              // Download the generated PDF
+              const pdfResponse = await fetch(result.url);
+              if (pdfResponse.ok) {
+                const pdfBuffer = await pdfResponse.arrayBuffer();
+                
+                // Save PDF to storage
+                const pdfFileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.pdf`;
+                const pdfFilePath = `${new Date().getFullYear()}/${pdfFileName}`;
+                
+                const { data: pdfUploadData, error: pdfUploadError } = await supabase.storage
+                  .from('certificates')
+                  .upload(pdfFilePath, new Blob([pdfBuffer], { type: 'application/pdf' }), {
+                    contentType: 'application/pdf',
+                    upsert: true
+                  });
+
+                if (pdfUploadError) {
+                  console.error('PDF storage upload error:', pdfUploadError);
+                } else {
+                  // Get public URL for PDF
+                  const { data: pdfUrlData } = supabase.storage
+                    .from('certificates')
+                    .getPublicUrl(pdfFilePath);
+                  
+                  pdfUrl = pdfUrlData.publicUrl;
+                  console.log('Certificate PDF saved to storage:', pdfUrl);
+                }
+              }
+            }
+          }
+        } catch (pdfError) {
+          console.error('PDF generation failed:', pdfError);
         }
       } catch (storageError) {
         console.error('Storage operation failed:', storageError);
@@ -194,6 +253,7 @@ serve(async (req) => {
       JSON.stringify({ 
         html: certificateHTML,
         htmlUrl,
+        pdfUrl,
         qrCode,
         certificateNumber: certificateData.certificateNumber,
         success: true

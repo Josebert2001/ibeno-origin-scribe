@@ -184,13 +184,20 @@ const CertificatesDashboard = () => {
     try {
       setDownloadingCerts(prev => new Set(prev).add(certId));
       
-      // Check if we have a stored file URL first
-      if (cert.certificate_html_url) {
-        // Download directly from storage
+      // Check if we have a stored PDF file URL first (priority)
+      if (cert.certificate_pdf_url) {
+        // Download PDF directly from storage
+        window.open(cert.certificate_pdf_url, '_blank');
+        toast({
+          title: "PDF Download Started",
+          description: `Certificate ${certId} PDF is being downloaded from storage.`,
+        });
+      } else if (cert.certificate_html_url) {
+        // Fallback to HTML download from storage
         window.open(cert.certificate_html_url, '_blank');
         toast({
-          title: "Download Started",
-          description: `Certificate ${certId} is being downloaded from storage.`,
+          title: "HTML Download Started", 
+          description: `Certificate ${certId} HTML is being downloaded. Use "Print to PDF" to convert.`,
         });
       } else {
         // Fallback: Generate certificate on demand
