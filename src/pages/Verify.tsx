@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Search, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Search, CheckCircle, XCircle, AlertCircle, Shield, FileText, Calendar, MapPin, User, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
@@ -117,23 +117,32 @@ const Verify = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-gray-900/80">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+      <header className="border-b bg-white/90 backdrop-blur-md shadow-sm dark:bg-gray-900/90">
         <div className="container mx-auto px-4 py-6 text-center">
-          <h1 className="text-3xl font-bold text-green-800 dark:text-green-200">
-            Certificate Verification Portal
-          </h1>
-          <p className="text-green-600 dark:text-green-400 mt-2">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-green-800 dark:text-green-200">
+                Certificate Verification Portal
+              </h1>
+            </div>
+          </div>
+          <p className="text-green-600 dark:text-green-400">
             Ibeno Local Government - Certificate of Origin
           </p>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-2xl mx-auto border-0 shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Search className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                <Search className="h-5 w-5 text-white" />
+              </div>
               Verify Certificate
             </CardTitle>
             <CardDescription>
@@ -141,89 +150,122 @@ const Verify = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <div className="flex-1">
-                <Label htmlFor="cert-id">Certificate ID</Label>
+                <Label htmlFor="cert-id" className="text-sm font-medium mb-2 block">Certificate ID</Label>
                 <Input
                   id="cert-id"
-                  placeholder="Enter certificate ID (e.g., PNG 000725 1)"
+                  placeholder="Enter certificate ID (e.g., IBN25 0001)"
                   value={certificateId}
                   onChange={(e) => setCertificateId(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleVerify()}
+                  className="h-12 border-green-200 focus:border-green-500 focus:ring-green-500/20"
                 />
               </div>
               <Button 
                 onClick={() => handleVerify()} 
                 disabled={loading}
-                className="mt-6"
+                className="mt-6 h-12 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg"
               >
-                {loading ? "Verifying..." : "Verify"}
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Verifying...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4" />
+                    Verify
+                  </div>
+                )}
               </Button>
             </div>
 
             {searched && certificate && (
               <>
                 <Separator />
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Certificate Details</h3>
+                    <h3 className="text-xl font-bold text-green-800 dark:text-green-200 flex items-center gap-2">
+                      <FileText className="w-5 h-5" />
+                      Certificate Details
+                    </h3>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(certificate.status)}
-                      <Badge className={getStatusColor(certificate.status)}>
+                      <Badge className={`${getStatusColor(certificate.status)} px-3 py-1 text-sm font-medium`}>
                         {certificate.status.toUpperCase()}
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <QrCode className="w-4 h-4" />
                         Certificate Number
                       </Label>
-                      <p className="font-mono text-sm">{certificate.certificate_number}</p>
+                      <p className="font-mono text-base font-semibold bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
+                        {certificate.certificate_number}
+                      </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
                         Date of Issuance
                       </Label>
-                      <p>{format(new Date(certificate.date_issued), "PPP")}</p>
+                      <p className="text-base font-medium bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg">
+                        {format(new Date(certificate.date_issued), "PPP")}
+                      </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <User className="w-4 h-4" />
                         Bearer Name
                       </Label>
-                      <p className="font-medium">{certificate.bearer_name}</p>
+                      <p className="text-base font-semibold bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-lg">
+                        {certificate.bearer_name}
+                      </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
                         Native Of
                       </Label>
-                      <p>{certificate.native_of}</p>
+                      <p className="text-base font-medium bg-orange-50 dark:bg-orange-900/20 px-3 py-2 rounded-lg">
+                        {certificate.native_of}
+                      </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
                         Village
                       </Label>
-                      <p>{certificate.village}</p>
+                      <p className="text-base font-medium bg-teal-50 dark:bg-teal-900/20 px-3 py-2 rounded-lg">
+                        {certificate.village}
+                      </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <Shield className="w-4 h-4" />
                         Issuing Authority
                       </Label>
-                      <p>Ibeno Local Government</p>
+                      <p className="text-base font-semibold bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
+                        Ibeno Local Government
+                      </p>
                     </div>
                   </div>
 
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <Label className="text-sm font-medium text-muted-foreground">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-xl border border-green-200 dark:border-green-700">
+                    <Label className="text-sm font-semibold text-green-800 dark:text-green-200 flex items-center gap-2 mb-3">
+                      <Shield className="w-4 h-4" />
                       Security Features
                     </Label>
-                    <p className="text-sm">
+                    <p className="text-sm leading-relaxed text-green-700 dark:text-green-300">
                       This certificate is protected by unique QR code verification and digital
                       signatures. The certificate data is stored securely and can be verified
                       at any time using this portal.
@@ -236,15 +278,17 @@ const Verify = () => {
             {searched && !certificate && !loading && (
               <>
                 <Separator />
-                <div className="text-center space-y-4">
+                <div className="text-center space-y-6 py-8">
                   <div className="flex justify-center">
-                    <XCircle className="h-12 w-12 text-red-500" />
+                    <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                      <XCircle className="h-10 w-10 text-red-500" />
+                    </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-red-700">
+                    <h3 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">
                       Certificate Not Found
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground leading-relaxed">
                       No certificate was found with the provided ID. Please check the ID and try again.
                     </p>
                   </div>
