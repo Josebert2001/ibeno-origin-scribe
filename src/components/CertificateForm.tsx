@@ -202,6 +202,7 @@ const CertificateForm = () => {
           village: data.village,
           qr_code_data: qrCodeData,
           certificate_file_url: `certificate_${certificateNumber}.html`,
+          certificate_html_url: null, // Will be updated after generation
           created_by: user.id
         })
       ]);
@@ -211,6 +212,14 @@ const CertificateForm = () => {
       }
 
       const certificateData = certificateGenResponse.data;
+      
+      // Update database with storage URL if available
+      if (certificateData.htmlUrl) {
+        await supabase
+          .from('certificates')
+          .update({ certificate_html_url: certificateData.htmlUrl })
+          .eq('certificate_number', certificateNumber);
+      }
       
       // Store HTML separately and set certificate data
       setCertificateHTML(certificateData.html || "");
@@ -223,7 +232,7 @@ const CertificateForm = () => {
 
       toast({
         title: "Success",
-        description: `Certificate ${certificateNumber} generated successfully!`
+        description: `Certificate ${certificateNumber} generated and stored successfully!`
       });
 
       // Generate new references for next certificate

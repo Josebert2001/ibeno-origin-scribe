@@ -18,7 +18,9 @@ export type Database = {
         Row: {
           bearer_name: string
           certificate_file_url: string | null
+          certificate_html_url: string | null
           certificate_number: string
+          certificate_pdf_url: string | null
           created_at: string
           created_by: string | null
           date_issued: string
@@ -34,7 +36,9 @@ export type Database = {
         Insert: {
           bearer_name: string
           certificate_file_url?: string | null
+          certificate_html_url?: string | null
           certificate_number: string
+          certificate_pdf_url?: string | null
           created_at?: string
           created_by?: string | null
           date_issued?: string
@@ -50,7 +54,9 @@ export type Database = {
         Update: {
           bearer_name?: string
           certificate_file_url?: string | null
+          certificate_html_url?: string | null
           certificate_number?: string
+          certificate_pdf_url?: string | null
           created_at?: string
           created_by?: string | null
           date_issued?: string

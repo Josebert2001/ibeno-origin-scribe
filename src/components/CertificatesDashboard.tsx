@@ -50,6 +50,8 @@ interface Certificate {
   created_by: string;
   our_ref: string;
   your_ref: string;
+  certificate_html_url?: string;
+  certificate_pdf_url?: string;
 }
 
 const CertificatesDashboard = () => {
@@ -182,39 +184,50 @@ const CertificatesDashboard = () => {
     try {
       setDownloadingCerts(prev => new Set(prev).add(certId));
       
-      const qrCodeData = `${window.location.origin}/verify?cert_id=${certId}`;
-      
-      const { data, error } = await supabase.functions.invoke('generate-certificate', {
-        body: {
-          ourRef: cert.our_ref,
-          yourRef: cert.your_ref,
-          dateIssued: cert.date_issued,
-          certificateNumber: cert.certificate_number,
-          bearerName: cert.bearer_name,
-          nativeOf: cert.native_of,
-          village: cert.village,
-          qrCodeData
-        }
-      });
+      // Check if we have a stored file URL first
+      if (cert.certificate_html_url) {
+        // Download directly from storage
+        window.open(cert.certificate_html_url, '_blank');
+        toast({
+          title: "Download Started",
+          description: `Certificate ${certId} is being downloaded from storage.`,
+        });
+      } else {
+        // Fallback: Generate certificate on demand
+        const qrCodeData = `${window.location.origin}/verify?cert_id=${certId}`;
+        
+        const { data, error } = await supabase.functions.invoke('generate-certificate', {
+          body: {
+            ourRef: cert.our_ref,
+            yourRef: cert.your_ref,
+            dateIssued: cert.date_issued,
+            certificateNumber: cert.certificate_number,
+            bearerName: cert.bearer_name,
+            nativeOf: cert.native_of,
+            village: cert.village,
+            qrCodeData
+          }
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Download the certificate HTML file with improved formatting
-      const blob = new Blob([data.html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `certificate_${certId}.html`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+        // Download the certificate HTML file with improved formatting
+        const blob = new Blob([data.html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `certificate_${certId}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
 
-      toast({
-        title: "Download Complete",
-        description: `Certificate ${certId} downloaded. Open the file and use your browser's "Print to PDF" feature for best results.`,
-        duration: 5000,
-      });
+        toast({
+          title: "Download Complete",
+          description: `Certificate ${certId} downloaded. Open the file and use your browser's "Print to PDF" feature for best results.`,
+          duration: 5000,
+        });
+      }
     } catch (error: any) {
       console.error('Download error:', error);
       toast({

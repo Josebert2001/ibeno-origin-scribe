@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -153,9 +153,47 @@ serve(async (req) => {
       .replace(/{{village}}/g, certificateData.village)
       .replace(/{{qrCode}}/g, qrCodeImg);
 
+    // Initialize Supabase client for storage
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    let htmlUrl = null;
+    
+    if (supabaseUrl && supabaseServiceKey) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      
+      try {
+        // Save HTML file to storage
+        const fileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.html`;
+        const filePath = `${new Date().getFullYear()}/${fileName}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('certificates')
+          .upload(filePath, new Blob([certificateHTML], { type: 'text/html' }), {
+            contentType: 'text/html',
+            upsert: true
+          });
+
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+        } else {
+          // Get public URL
+          const { data: urlData } = supabase.storage
+            .from('certificates')
+            .getPublicUrl(filePath);
+          
+          htmlUrl = urlData.publicUrl;
+          console.log('Certificate saved to storage:', htmlUrl);
+        }
+      } catch (storageError) {
+        console.error('Storage operation failed:', storageError);
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         html: certificateHTML,
+        htmlUrl,
         qrCode,
         certificateNumber: certificateData.certificateNumber,
         success: true
