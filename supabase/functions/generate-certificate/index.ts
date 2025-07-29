@@ -63,6 +63,8 @@ serve(async (req) => {
     });
 
     // Replace template placeholders with actual data
+    const qrCodeImg = `<img src="${qrCode}" alt="QR Code for Certificate Verification" style="width: 100%; height: 100%; object-fit: contain;" />`;
+    
     const certificateHTML = template
       .replace(/{{ourRef}}/g, certificateData.ourRef)
       .replace(/{{yourRef}}/g, certificateData.yourRef)
@@ -71,7 +73,7 @@ serve(async (req) => {
       .replace(/{{full_name}}/g, certificateData.bearerName)
       .replace(/{{clan}}/g, certificateData.nativeOf)
       .replace(/{{village}}/g, certificateData.village)
-      .replace(/{{qrCode}}/g, qrCode);
+      .replace(/{{qrCode}}/g, qrCodeImg);
 
     return new Response(
       JSON.stringify({ 
