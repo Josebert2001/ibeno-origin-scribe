@@ -84,15 +84,19 @@ const Admin = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Shield className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                <img 
+                  src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                  alt="ibnOrigin Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-green-800 dark:text-green-200">
-                  Admin Portal
+                  ibnOrigin Admin
                 </h1>
                 <p className="text-sm text-green-600 dark:text-green-400">
-                  Ibeno Local Government - Certificate of Origin
+                  Certificate of Origin Portal
                 </p>
               </div>
             </div>

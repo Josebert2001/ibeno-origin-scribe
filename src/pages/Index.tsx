@@ -12,15 +12,19 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Shield className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                  <img 
+                    src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                    alt="ibnOrigin Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-green-800 dark:text-green-200">
-                    Ibeno Local Government
+                    ibnOrigin
                   </h1>
                   <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                    Akwa Ibom State
+                    Certificate of Origin Portal
                   </p>
                 </div>
               </div>
@@ -227,11 +231,15 @@ const Index = () => {
         {/* Footer */}
         <footer className="py-12 text-center border-t border-green-200 dark:border-green-800">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center">
-              <Shield className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                alt="ibnOrigin Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="font-semibold text-green-800 dark:text-green-200">
-              Ibeno Local Government
+              ibnOrigin
             </span>
           </div>
           <p className="text-green-600 dark:text-green-400 mb-2">
