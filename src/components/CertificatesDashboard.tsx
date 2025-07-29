@@ -199,7 +199,7 @@ const CertificatesDashboard = () => {
 
       if (error) throw error;
 
-      // Create and download HTML file
+      // Download the certificate HTML file with improved formatting
       const blob = new Blob([data.html], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -212,7 +212,8 @@ const CertificatesDashboard = () => {
 
       toast({
         title: "Download Complete",
-        description: `Certificate ${certId} downloaded successfully`,
+        description: `Certificate ${certId} downloaded. Open the file and use your browser's "Print to PDF" feature for best results.`,
+        duration: 5000,
       });
     } catch (error: any) {
       console.error('Download error:', error);

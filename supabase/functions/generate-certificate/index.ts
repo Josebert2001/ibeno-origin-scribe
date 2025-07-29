@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -138,6 +139,9 @@ serve(async (req) => {
       year: 'numeric'
     });
 
+    // Create QR code img tag for proper insertion
+    const qrCodeImg = `<img src="${qrCode}" alt="QR Code for Certificate Verification" style="width: 100%; height: 100%; object-fit: contain;" />`;
+    
     // Replace template placeholders with actual data using safe HTML replacement
     const certificateHTML = template
       .replace(/{{ourRef}}/g, certificateData.ourRef)
@@ -147,7 +151,7 @@ serve(async (req) => {
       .replace(/{{full_name}}/g, certificateData.bearerName)
       .replace(/{{clan}}/g, certificateData.nativeOf)
       .replace(/{{village}}/g, certificateData.village)
-      .replace(/{{qrCode}}/g, qrCode);
+      .replace(/{{qrCode}}/g, qrCodeImg);
 
     return new Response(
       JSON.stringify({ 

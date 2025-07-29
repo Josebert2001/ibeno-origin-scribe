@@ -340,11 +340,24 @@
             body {
                 margin: 0;
                 padding: 0;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
             }
             
             .certificate-container {
-                border: 12px solid #00a650;
+                border: 12px solid #00a650 !important;
                 page-break-inside: avoid;
+                background: white !important;
+            }
+
+            .certificate-container::before {
+                border: 2px solid #00a650 !important;
+                background: none !important;
+            }
+            
+            .qr-code img {
+                max-width: 100% !important;
+                height: auto !important;
             }
         }
     </style>
