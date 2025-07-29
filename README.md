@@ -1,73 +1,79 @@
-# Welcome to your Lovable project
+# Ibeno Origin Scribe
 
-## Project info
+A modern certificate generation and verification system for authenticating Ibeno community membership and origin.
 
-**URL**: https://lovable.dev/projects/557629bc-0000-4938-a16a-c09dbf780ca6
+## About
 
-## How can I edit this code?
+Ibeno Origin Scribe is a web application designed to streamline the process of generating, managing, and verifying certificates of origin for members of the Ibeno community. The system provides a secure and efficient way to issue digital certificates with QR code verification.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **Digital Certificate Generation**: Automated creation of certificates with unique QR codes
+- **Admin Dashboard**: Manage and monitor certificate issuance
+- **Secure Authentication**: Protected access for administrative functions
+- **QR Code Verification**: Easy verification of certificate authenticity
+- **Supabase Integration**: Robust backend for data management and storage
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/557629bc-0000-4938-a16a-c09dbf780ca6) and start prompting.
+## Technology Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**:
+  - React with TypeScript
+  - Vite for build tooling
+  - shadcn-ui components
+  - Tailwind CSS for styling
 
-**Use your preferred IDE**
+- **Backend**:
+  - Supabase for database and authentication
+  - Serverless functions for certificate generation
+  - QR code generation service
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Prerequisites**
+   - Node.js (Latest LTS version)
+   - npm or bun package manager
 
-Follow these steps:
+2. **Installation**
+   ```sh
+   # Clone the repository
+   git clone https://github.com/Josebert3001/ibeno-origin-scribe.git
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+   # Navigate to project directory
+   cd ibeno-origin-scribe
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   # Install dependencies
+   npm install
+   # or
+   bun install
 
-# Step 3: Install the necessary dependencies.
-npm i
+   # Start the development server
+   npm run dev
+   # or
+   bun run dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+3. **Environment Setup**
+   - Copy `.env.example` to `.env`
+   - Configure your Supabase credentials
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `/src` - Source code
+  - `/components` - React components
+  - `/pages` - Application pages
+  - `/integrations` - External service integrations
+  - `/utils` - Utility functions
+- `/public` - Static assets
+- `/supabase` - Database migrations and functions
 
-**Use GitHub Codespaces**
+## Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## What technologies are used for this project?
+## License
 
-This project is built with:
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Contact
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/557629bc-0000-4938-a16a-c09dbf780ca6) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+For any queries regarding this project, please open an issue in the GitHub repository.
