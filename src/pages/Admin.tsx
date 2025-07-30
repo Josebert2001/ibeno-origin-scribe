@@ -86,7 +86,7 @@ const Admin = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                 <img 
-                  src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                  src="/logo.png" 
                   alt="ibnOrigin Logo"
                   className="w-full h-full object-contain"
                 />
