@@ -86,7 +86,7 @@ function validateCertificateData(data: any): CertificateData {
 async function loadCertificateTemplate(): Promise<string> {
   try {
     // Load the template from the public directory
-    const templateUrl = 'https://raw.githubusercontent.com/Josebert3001/ibeno-origin-scribe/main/public/certificate-template.html';
+    const templateUrl = 'https://557629bc-0000-4938-a16a-c09dbf780ca6.lovableproject.com/certificate-template.html';
     const templateResponse = await fetch(templateUrl);
     if (!templateResponse.ok) {
       throw new Error(`Failed to fetch template: ${templateResponse.statusText}`);
@@ -95,6 +95,23 @@ async function loadCertificateTemplate(): Promise<string> {
   } catch (error) {
     console.error('Error loading certificate template:', error);
     throw new Error('Failed to load certificate template');
+  }
+}
+
+async function loadLogoAsBase64(): Promise<string> {
+  try {
+    // Load the logo from the public directory
+    const logoUrl = 'https://557629bc-0000-4938-a16a-c09dbf780ca6.lovableproject.com/logo.png';
+    const logoResponse = await fetch(logoUrl);
+    if (!logoResponse.ok) {
+      throw new Error(`Failed to fetch logo: ${logoResponse.statusText}`);
+    }
+    const logoBuffer = await logoResponse.arrayBuffer();
+    const base64Logo = btoa(String.fromCharCode(...new Uint8Array(logoBuffer)));
+    return base64Logo;
+  } catch (error) {
+    console.error('Error loading logo:', error);
+    throw new Error('Failed to load logo');
   }
 }
 
@@ -129,8 +146,9 @@ serve(async (req) => {
     const base64QR = btoa(String.fromCharCode(...new Uint8Array(qrImageBuffer)));
     const qrCode = `data:image/png;base64,${base64QR}`;
 
-    // Load certificate template
+    // Load certificate template and logo
     const template = await loadCertificateTemplate();
+    const logoBase64 = await loadLogoAsBase64();
 
     // Format the date for display
     const dateFormatted = new Date(certificateData.dateIssued).toLocaleDateString('en-GB', {
@@ -151,7 +169,8 @@ serve(async (req) => {
       .replace(/{{full_name}}/g, certificateData.bearerName)
       .replace(/{{clan}}/g, certificateData.nativeOf)
       .replace(/{{village}}/g, certificateData.village)
-      .replace(/{{qrCode}}/g, qrCodeImg);
+      .replace(/{{qrCode}}/g, qrCodeImg)
+      .replace(/{{logoBase64}}/g, logoBase64);
 
     // Initialize Supabase client for storage
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
