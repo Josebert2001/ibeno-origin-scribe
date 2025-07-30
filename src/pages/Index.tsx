@@ -14,7 +14,7 @@ const Index = () => {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                   <img 
-                    src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                    src="/logo.png" 
                     alt="ibnOrigin Logo"
                     className="w-full h-full object-contain"
                   />
@@ -238,7 +238,7 @@ const Index = () => {
           <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">
             <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg flex items-center justify-center overflow-hidden">
               <img
-                src="/lovable-uploads/c409bc76-3361-48ef-b201-0a14403a3417.png" 
+                src="/logo.png" 
                 alt="ibnOrigin Logo"
                 className="w-full h-full object-contain"
               />
