@@ -140,7 +140,9 @@ const Admin = () => {
                     Issue Certificate of Origin
                   </CardTitle>
                   <CardDescription className="text-base">
-                    Fill out the form below to generate a new Certificate of Origin
+                    Fill out the form below to generate a new Certificate of Origin.
+                    <span className="text-important font-semibold"> Important: </span>
+                    <span className="text-warning">All fields marked with * are required.</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8">
