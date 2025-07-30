@@ -146,7 +146,7 @@ serve(async (req) => {
     }
 
     // Generate QR code using QR Server API
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(certificateData.qrCodeData)}&format=png`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(certificateData.qrCodeData)}&format=png`;
     const qrResponse = await fetch(qrUrl);
     
     if (!qrResponse.ok) {
