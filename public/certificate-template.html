@@ -163,36 +163,37 @@
         }
 
         .reference-section {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 13px;
+            margin-bottom: 25px;
+            font-size: 14px;
             position: relative;
             z-index: 2;
-            padding: 0 10px;
+            padding: 0 20px;
+            gap: 15px;
         }
 
-        .left-refs {
-            text-align: left;
+        .cert-number {
+            text-align: center;
+            margin-bottom: 10px;
         }
 
-        .left-refs p {
-            margin-bottom: 6px;
-            font-weight: 500;
+        .cert-number p {
+            margin: 0;
+            font-weight: 600;
             color: #2c3e50;
         }
 
-        .left-refs .ref-label {
-            font-weight: 600;
+        .cert-number .ref-label {
+            font-weight: 700;
             color: #00a650;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .center-seal {
             text-align: center;
-            justify-self: center;
+            margin: 10px 0;
         }
 
         .government-seal {
@@ -202,7 +203,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 6px auto;
+            margin: 0 auto 8px auto;
             position: relative;
             background: #ffffff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
@@ -212,32 +213,35 @@
         }
 
         .seal-motto {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             color: #a60000;
-            margin-top: 4px;
+            margin-top: 5px;
+            text-align: center;
         }
 
-        .right-info {
-            text-align: right;
+        .date-info {
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .right-info p {
-            margin-bottom: 4px;
+        .date-info p {
+            margin: 2px 0;
             color: #2c3e50;
             font-weight: 500;
+            font-size: 13px;
         }
 
-        .right-info .address-line {
+        .date-info .address-line {
             font-size: 12px;
             color: #666;
         }
 
-        .right-info .date-line {
-            font-weight: 600;
+        .date-info .date-line {
+            font-weight: 700;
             color: #00a650;
-            margin-top: 6px;
-            font-size: 12px;
+            margin-top: 8px;
+            font-size: 14px;
         }
         
         .title {
@@ -508,7 +512,7 @@
         </div>
 
         <div class="reference-section">
-            <div class="left-refs">
+            <div class="cert-number">
                 <p><span class="ref-label">Cert. No:</span> <span id="ref_number">{{certificateNumber}}</span></p>
             </div>
             
@@ -519,10 +523,10 @@
                 <div class="seal-motto">UNITY AND LABOUR!</div>
             </div>
             
-            <div class="right-info">
+            <div class="date-info">
                 <p class="address-line">Local Government Secretariat</p>
                 <p class="address-line">Upenekang Town</p>
-                <P class="address-line">Ibeno Local Government Area</P>
+                <p class="address-line">Ibeno Local Government Area</p>
                 <p class="address-line">Akwa Ibom State</p>
                 <p class="date-line" id="date">{{date}}</p>
             </div>
