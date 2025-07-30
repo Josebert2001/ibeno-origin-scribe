@@ -107,7 +107,18 @@ async function loadLogoAsBase64(): Promise<string> {
       throw new Error(`Failed to fetch logo: ${logoResponse.statusText}`);
     }
     const logoBuffer = await logoResponse.arrayBuffer();
-    const base64Logo = btoa(String.fromCharCode(...new Uint8Array(logoBuffer)));
+    
+    // Convert buffer to base64 using a more efficient method
+    const bytes = new Uint8Array(logoBuffer);
+    let binary = '';
+    const chunkSize = 8192;
+    
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.slice(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+    
+    const base64Logo = btoa(binary);
     return base64Logo;
   } catch (error) {
     console.error('Error loading logo:', error);
