@@ -7,6 +7,31 @@ const corsHeaders = {
   'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none';",
 };
 
+// Rate limiting map (simple in-memory for now)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+const RATE_LIMIT = {
+  maxRequests: 10, // 10 requests per window
+  windowMs: 15 * 60 * 1000, // 15 minutes
+};
+
+function checkRateLimit(clientId: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const entry = rateLimitMap.get(clientId);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(clientId, { count: 1, resetTime: now + RATE_LIMIT.windowMs });
+    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
+  }
+  
+  if (entry.count >= RATE_LIMIT.maxRequests) {
+    return { allowed: false, remaining: 0 };
+  }
+  
+  entry.count++;
+  return { allowed: true, remaining: RATE_LIMIT.maxRequests - entry.count };
+}
+
 interface CertificateData {
   ourRef: string;
   yourRef: string;
@@ -133,7 +158,33 @@ serve(async (req) => {
   }
 
   try {
+    // Rate limiting
+    const clientId = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const rateCheck = checkRateLimit(clientId);
+    
+    if (!rateCheck.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          status: 429, 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': Math.ceil((Date.now() + RATE_LIMIT.windowMs) / 1000).toString()
+          } 
+        }
+      );
+    }
+
     const rawData = await req.json();
+    
+    // Enhanced logging for monitoring
+    console.log('Certificate generation request:', {
+      timestamp: new Date().toISOString(),
+      client_id: clientId,
+      bearer_name: rawData.bearerName,
+    });
     
     // Validate and sanitize input data
     const certificateData: CertificateData = validateCertificateData(rawData);

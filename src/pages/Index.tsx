@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Search, FileText, Users, ArrowRight, CheckCircle, Clock, Globe } from "lucide-react";
+import PageMetadata from "@/components/PageMetadata";
+import { analytics } from "@/utils/analytics";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
 const Index = () => {
+  usePerformanceMonitoring();
+
+  useEffect(() => {
+    analytics.page('Home');
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+    <>
+      <PageMetadata 
+        title="ibnOrigin - Digital Certificate of Origin Portal"
+        description="Official digital certificate of origin verification system for Ibeno Local Government Area, Akwa Ibom State. Secure, verifiable, and instant certificate issuance."
+        keywords="Ibeno, certificate, origin, verification, government, digital, secure, official, Akwa Ibom"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
       {/* Header */}
       <header className="border-b bg-white/90 backdrop-blur-md shadow-sm dark:bg-gray-900/90">
         <div className="container mx-auto px-4 py-4 md:py-6">
@@ -255,7 +271,8 @@ const Index = () => {
           </p>
         </footer>
       </main>
-    </div>
+      </div>
+    </>
   );
 };
 

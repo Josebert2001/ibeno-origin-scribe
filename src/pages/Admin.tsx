@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, FileText, BarChart3, Shield, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import CertificateForm from "@/components/CertificateForm";
 import CertificatesDashboard from "@/components/CertificatesDashboard";
 
@@ -14,6 +15,7 @@ const Admin = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -23,10 +25,29 @@ const Admin = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
         
-        // Redirect to auth if no session
-        if (!session) {
+        // Check admin status when user changes
+        if (session?.user) {
+          setTimeout(async () => {
+            try {
+              const { data, error } = await supabase
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', session.user.id)
+                .eq('role', 'admin')
+                .single();
+                
+              setIsAdmin(!error && !!data);
+            } catch (error) {
+              console.error('Error checking admin status:', error);
+              setIsAdmin(false);
+            } finally {
+              setLoading(false);
+            }
+          }, 0);
+        } else {
+          setIsAdmin(false);
+          setLoading(false);
           navigate("/auth");
         }
       }
@@ -65,11 +86,34 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-green-600 dark:text-green-400">Verifying access...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 dark:from-red-950 dark:via-pink-950 dark:to-orange-950">
+        <Card className="max-w-md">
+          <CardHeader className="text-center">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-red-600 dark:text-red-400" />
+            </div>
+            <CardTitle className="text-red-800 dark:text-red-200">Access Denied</CardTitle>
+            <CardDescription className="text-red-600 dark:text-red-400">
+              You don't have admin permissions to access this page.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => navigate("/")} className="w-full">
+              Return to Home
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
