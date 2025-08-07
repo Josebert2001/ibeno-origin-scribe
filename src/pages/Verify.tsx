@@ -121,8 +121,12 @@ const Verify = () => {
       <header className="border-b bg-white/90 backdrop-blur-md shadow-sm dark:bg-gray-900/90">
         <div className="container mx-auto px-4 py-6 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+              <img 
+                src="/logo.png" 
+                alt="Ibeno Local Government Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-green-800 dark:text-green-200">
