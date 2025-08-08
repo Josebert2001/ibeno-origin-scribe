@@ -160,7 +160,7 @@ const Admin = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main id="main-content" className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <Tabs defaultValue="create" className="space-y-8">
             <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-lg h-12">

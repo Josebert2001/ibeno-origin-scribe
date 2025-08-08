@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Search, CheckCircle, XCircle, AlertCircle, Shield, FileText, Calendar, MapPin, User, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import PageMetadata from "@/components/PageMetadata";
 
 interface Certificate {
   id: string;
@@ -117,7 +118,13 @@ const Verify = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+    <>
+      <PageMetadata 
+        title="Verify Certificate - ibnOrigin"
+        description="Verify the authenticity of an Ibeno Certificate of Origin instantly."
+        keywords="verify certificate, Ibeno, certificate of origin, QR verification"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
       <header className="border-b bg-white/90 backdrop-blur-md shadow-sm dark:bg-gray-900/90">
         <div className="container mx-auto px-4 py-6 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
@@ -140,7 +147,7 @@ const Verify = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main id="main-content" className="container mx-auto px-4 py-8">
         <Card className="max-w-2xl mx-auto border-0 shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
@@ -303,6 +310,7 @@ const Verify = () => {
         </Card>
       </main>
     </div>
+    </>
   );
 };
 
