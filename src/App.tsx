@@ -12,8 +12,6 @@ import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -47,14 +45,14 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <SidebarProvider>
+            
               <header className="flex h-14 items-center border-b px-3 gap-2">
-                <SidebarTrigger className="mr-1" aria-label="Open navigation menu" />
+                
                 <BackButton />
                 <Link to="/" className="ml-1 font-semibold tracking-tight hover-scale">ibnOrigin</Link>
               </header>
               <div className="flex min-h-screen w-full">
-                <AppSidebar />
+                
                 <main className="flex-1">
                   <Routes>
                     <Route path="/" element={<Index />} />
@@ -68,7 +66,7 @@ const App = () => (
                   </Routes>
                 </main>
               </div>
-            </SidebarProvider>
+            
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
