@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
@@ -44,14 +44,12 @@ const App = () => (
           </Helmet>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            
-              <header className="flex h-14 items-center border-b px-3 gap-2">
-                
+            <BrowserRouter>
+              <div className="fixed top-3 left-3 z-50">
                 <BackButton />
-                <Link to="/" className="ml-1 font-semibold tracking-tight hover-scale">ibnOrigin</Link>
-              </header>
-              <div className="flex min-h-screen w-full">
+              </div>
+            
+              <div className="min-h-screen w-full">
                 
                 <main className="flex-1">
                   <Routes>
