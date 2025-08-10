@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
@@ -14,8 +14,20 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const queryClient = new QueryClient();
+
+const BackButton = () => {
+  const navigate = useNavigate();
+  return (
+    <Button variant="ghost" size="sm" onClick={() => navigate(-1)} aria-label="Go back">
+      <ArrowLeft className="h-4 w-4" />
+      <span className="sr-only">Back</span>
+    </Button>
+  );
+};
 
 const App = () => (
   <HelmetProvider>
@@ -36,9 +48,10 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <SidebarProvider>
-              <header className="flex h-14 items-center border-b px-3">
-                <SidebarTrigger className="mr-2" aria-label="Open navigation menu" />
-                <Link to="/" className="font-semibold tracking-tight hover-scale">ibnOrigin</Link>
+              <header className="flex h-14 items-center border-b px-3 gap-2">
+                <SidebarTrigger className="mr-1" aria-label="Open navigation menu" />
+                <BackButton />
+                <Link to="/" className="ml-1 font-semibold tracking-tight hover-scale">ibnOrigin</Link>
               </header>
               <div className="flex min-h-screen w-full">
                 <AppSidebar />

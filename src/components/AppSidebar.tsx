@@ -29,7 +29,7 @@ export function AppSidebar() {
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   return (
-    <Sidebar className="w-60" collapsible="icon">
+    <Sidebar className="w-60" collapsible="offcanvas">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
