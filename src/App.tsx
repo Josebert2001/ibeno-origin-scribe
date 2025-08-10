@@ -12,20 +12,10 @@ import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import TopNav from "@/components/TopNav";
 
 const queryClient = new QueryClient();
 
-const BackButton = () => {
-  const navigate = useNavigate();
-  return (
-    <Button variant="ghost" size="sm" onClick={() => navigate(-1)} aria-label="Go back">
-      <ArrowLeft className="h-4 w-4" />
-      <span className="sr-only">Back</span>
-    </Button>
-  );
-};
 
 const App = () => (
   <HelmetProvider>
@@ -45,10 +35,7 @@ const App = () => (
           <Toaster />
           <Sonner />
             <BrowserRouter>
-              <div className="fixed top-3 left-3 z-50">
-                <BackButton />
-              </div>
-            
+              <TopNav />
               <div className="min-h-screen w-full">
                 
                 <main className="flex-1">
