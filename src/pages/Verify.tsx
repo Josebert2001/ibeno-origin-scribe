@@ -133,6 +133,11 @@ const Verify = () => {
                 src="/logo.png" 
                 alt="Ibeno Local Government Logo" 
                 className="w-full h-full object-contain"
+                width={48}
+                height={48}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
             <div>
