@@ -7,21 +7,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Search, CheckCircle, XCircle, AlertCircle, Shield, FileText, Calendar, MapPin, User, QrCode } from "lucide-react";
+import { Search, CheckCircle, XCircle, AlertCircle, Shield, FileText, Calendar, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import PageMetadata from "@/components/PageMetadata";
 
 interface Certificate {
-  id: string;
   certificate_number: string;
-  bearer_name: string;
-  native_of: string;
-  village: string;
   date_issued: string;
   status: string;
-  created_at: string;
 }
+
 
 const Verify = () => {
   const [searchParams] = useSearchParams();
@@ -56,13 +52,11 @@ const Verify = () => {
     setSearched(true);
 
     try {
-      const { data, error } = await supabase
-        .from('certificates')
-        .select('*')
-        .eq('certificate_number', idToSearch.trim())
-        .single();
+      const { data, error } = await supabase.functions.invoke('verify-certificate', {
+        body: { query: idToSearch.trim() },
+      });
 
-      if (error || !data) {
+      if (error || !data || data.found === false) {
         setCertificate(null);
         toast({
           title: "Certificate Not Found",
@@ -70,10 +64,10 @@ const Verify = () => {
           variant: "destructive",
         });
       } else {
-        setCertificate(data);
+        setCertificate(data.certificate);
         toast({
           title: "Certificate Found",
-          description: "Certificate details loaded successfully",
+          description: "Certificate status loaded successfully",
         });
       }
     } catch (error) {
@@ -235,43 +229,13 @@ const Verify = () => {
                       </p>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Bearer Name
-                      </Label>
-                      <p className="text-base font-semibold bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-lg">
-                        {certificate.bearer_name}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        Native Of
-                      </Label>
-                      <p className="text-base font-medium bg-orange-50 dark:bg-orange-900/20 px-3 py-2 rounded-lg">
-                        {certificate.native_of}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        Village
-                      </Label>
-                      <p className="text-base font-medium bg-teal-50 dark:bg-teal-900/20 px-3 py-2 rounded-lg">
-                        {certificate.village}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
+                    <div className="space-y-2 md:col-span-2">
                       <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                         <Shield className="w-4 h-4" />
-                        Issuing Authority
+                        Privacy Protection
                       </Label>
-                      <p className="text-base font-semibold bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
-                        Ibeno Local Government
+                      <p className="text-sm leading-relaxed text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
+                        To protect personal data, this page only displays certificate validity and non-identifying details.
                       </p>
                     </div>
                   </div>
