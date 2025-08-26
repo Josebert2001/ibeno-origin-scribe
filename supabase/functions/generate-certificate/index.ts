@@ -110,26 +110,58 @@ function validateCertificateData(data: any): CertificateData {
 
 async function loadCertificateTemplate(): Promise<string> {
   try {
-    // Load the template from the public directory
-    const templateUrl = 'https://557629bc-0000-4938-a16a-c09dbf780ca6.lovableproject.com/certificate-template.html';
+    // Load the template from Supabase Storage or fallback to GitHub raw content
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    let templateUrl: string;
+    
+    if (supabaseUrl) {
+      // Try Supabase Storage first
+      templateUrl = `${supabaseUrl}/storage/v1/object/public/static-assets/certificate-template.html`;
+    } else {
+      // Fallback to a more reliable source
+      templateUrl = 'https://raw.githubusercontent.com/your-repo/ibeno-origin-scribe/main/public/certificate-template.html';
+    }
+    
     const templateResponse = await fetch(templateUrl);
     if (!templateResponse.ok) {
-      throw new Error(`Failed to fetch template: ${templateResponse.statusText}`);
+      // If Supabase Storage fails, try the embedded template as fallback
+      if (supabaseUrl && templateUrl.includes('supabase.co')) {
+        console.warn('Supabase Storage template fetch failed, using embedded template');
+        return getEmbeddedTemplate();
+      }
+      throw new Error(`Failed to fetch template from ${templateUrl}: ${templateResponse.statusText}`);
     }
     return await templateResponse.text();
   } catch (error) {
     console.error('Error loading certificate template:', error);
-    throw new Error('Failed to load certificate template');
+    // Final fallback to embedded template
+    console.warn('Using embedded template as final fallback');
+    return getEmbeddedTemplate();
   }
 }
 
 async function loadLogoAsBase64(): Promise<string> {
   try {
-    // Load the logo from the public directory
-    const logoUrl = 'https://557629bc-0000-4938-a16a-c09dbf780ca6.lovableproject.com/logo.png';
+    // Load the logo from Supabase Storage or fallback
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    let logoUrl: string;
+    
+    if (supabaseUrl) {
+      // Try Supabase Storage first
+      logoUrl = `${supabaseUrl}/storage/v1/object/public/static-assets/logo.png`;
+    } else {
+      // Fallback to a more reliable source
+      logoUrl = 'https://raw.githubusercontent.com/your-repo/ibeno-origin-scribe/main/public/logo.png';
+    }
+    
     const logoResponse = await fetch(logoUrl);
     if (!logoResponse.ok) {
-      throw new Error(`Failed to fetch logo: ${logoResponse.statusText}`);
+      // If Supabase Storage fails, use a default placeholder
+      if (supabaseUrl && logoUrl.includes('supabase.co')) {
+        console.warn('Supabase Storage logo fetch failed, using default placeholder');
+        return getDefaultLogoBase64();
+      }
+      throw new Error(`Failed to fetch logo from ${logoUrl}: ${logoResponse.statusText}`);
     }
     const logoBuffer = await logoResponse.arrayBuffer();
     
@@ -147,8 +179,95 @@ async function loadLogoAsBase64(): Promise<string> {
     return base64Logo;
   } catch (error) {
     console.error('Error loading logo:', error);
-    throw new Error('Failed to load logo');
+    // Final fallback to default logo
+    console.warn('Using default logo as final fallback');
+    return getDefaultLogoBase64();
   }
+}
+
+// Embedded template as fallback
+function getEmbeddedTemplate(): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Origin</title>
+    <style>
+        @page { size: B5; margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background-color: #ffffff; width: 176mm; height: 250mm; margin: 0 auto; position: relative; overflow: hidden; padding: 0; }
+        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 15mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; border: 10px solid #00a650; box-shadow: inset 0 0 0 4px #ffffff, inset 0 0 0 8px #00aeef, inset 0 0 0 12px #ffffff, inset 0 0 0 16px #00a650, 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .header { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; padding-top: 10px; }
+        .header h1 { font-size: 32px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 0.5px; margin: 0 0 12px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1px #00a650; }
+        .header h2 { font-size: 22px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
+        .title { font-size: 36px; color: #00aeef; margin: 15px 0 20px; font-family: 'Georgia', serif; font-style: italic; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); font-weight: bold; text-align: center; letter-spacing: 1px; }
+        .content { font-size: 18px; line-height: 1.6; text-align: justify; margin: 10px 0 20px; position: relative; z-index: 2; background: rgba(255,255,255,0.9); padding: 25px 30px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); flex-grow: 1; }
+        .content p { margin-bottom: 20px; color: #2c3e50; }
+        .content p strong { color: #00a650; font-size: 19px; letter-spacing: 0.5px; }
+        .footer { margin-top: auto; position: relative; z-index: 2; }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding: 0 10px; }
+        .signature { text-align: center; background: rgba(255,255,255,0.95); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 14px; font-weight: 600; flex-shrink: 0; min-width: 180px; }
+        .signature::before { content: ''; display: block; border-bottom: 2px solid #2c3e50; height: 40px; margin-bottom: 8px; }
+        .qr-code { width: 100px; height: 100px; border: 2px solid #00a650; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #00a650; background: rgba(255,255,255,0.95); z-index: 2; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; flex-shrink: 0; }
+        .government-seal { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto; position: relative; background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 3px solid #00a650; padding: 4px; overflow: hidden; }
+        .reference-section { display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px; font-size: 13px; position: relative; z-index: 2; padding: 0 10px; }
+        .left-refs { text-align: left; }
+        .left-refs p { margin-bottom: 6px; font-weight: 500; color: #2c3e50; }
+        .left-refs .ref-label { font-weight: 600; color: #00a650; font-size: 15px; }
+        .center-seal { text-align: center; justify-self: center; }
+        .seal-motto { font-size: 10px; font-weight: bold; color: #a60000; margin-top: 4px; }
+        .right-info { text-align: right; }
+        .right-info p { margin-bottom: 4px; color: #2c3e50; font-weight: 500; }
+        .right-info .address-line { font-size: 12px; color: #666; }
+        .right-info .date-line { font-weight: 600; color: #00a650; margin-top: 6px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="header">
+            <h1>IBENO LOCAL GOVERNMENT</h1>
+            <h2>AKWA IBOM STATE</h2>
+        </div>
+        <div class="reference-section">
+            <div class="left-refs">
+                <p><span class="ref-label">Cert. No:</span> <span>{{certificateNumber}}</span></p>
+            </div>
+            <div class="center-seal">
+                <div class="government-seal">
+                    <img src="data:image/png;base64,{{logoBase64}}" alt="Ibeno Local Government Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
+                </div>
+                <div class="seal-motto">UNITY AND LABOUR!</div>
+            </div>
+            <div class="right-info">
+                <p class="address-line">Local Government Secretariat</p>
+                <p class="address-line">Upenekang Town</p>
+                <p class="address-line">Ibeno Local Government Area</p>
+                <p class="address-line">Akwa Ibom State</p>
+                <p class="date-line">{{date}}</p>
+            </div>
+        </div>
+        <div class="title">Certificate of Origin</div>
+        <div class="content">
+            <p>This is to formally certify that:</p>
+            <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+            <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+        </div>
+        <div class="footer">
+            <div class="footer-content">
+                <div class="qr-code">{{qrCode}}</div>
+                <div class="signature">Executive Chairman<br>Ibeno Local Government</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+// Default logo as base64 (simple placeholder)
+function getDefaultLogoBase64(): string {
+  // This is a simple 1x1 transparent PNG as a fallback
+  return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 }
 
 serve(async (req) => {
