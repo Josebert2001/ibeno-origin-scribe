@@ -114,9 +114,23 @@ const CertificateForm = () => {
     URL.revokeObjectURL(url);
   }, []);
 
-  // Optimized print function
+  // Optimized print function with mobile fallback
   const printCertificate = useCallback((html: string) => {
-    const printWindow = window.open('', '_blank');
+    // Check if we're on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // On mobile, offer HTML download instead of print (print dialogs often fail on mobile)
+      toast({
+        title: "Mobile Print",
+        description: "On mobile devices, we'll download the certificate as HTML which you can then print or save.",
+      });
+      downloadHTML(html, `certificate_${generatedCertificate?.certificateNumber || 'download'}.html`);
+      return;
+    }
+    
+    // Desktop print functionality
+    const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
     if (printWindow) {
       printWindow.document.write(html);
       printWindow.document.close();
@@ -129,8 +143,15 @@ const CertificateForm = () => {
       setTimeout(() => {
         printWindow.print();
       }, 500);
+    } else {
+      // Fallback if popup blocked
+      toast({
+        title: "Print Blocked",
+        description: "Please allow popups and try again, or download the HTML version instead.",
+        variant: "destructive"
+      });
     }
-  }, []);
+  }, [downloadHTML, generatedCertificate, toast]);
 
   // Optimized form submission with duplicate check
   const onSubmit = useCallback(async (data: CertificateFormData) => {
@@ -445,11 +466,11 @@ const CertificateForm = () => {
                 </p>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
                 {generatedCertificate.pdf && (
                   <Button 
                     onClick={() => downloadPDF(generatedCertificate.pdf!, `certificate_${generatedCertificate.certificateNumber}.pdf`)} 
-                    className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg h-12 px-6"
+                    className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg h-12 px-6 w-full sm:w-auto"
                   >
                     <Download className="h-5 w-5 mr-2" />
                     Download PDF
@@ -459,10 +480,20 @@ const CertificateForm = () => {
                   <Button 
                     onClick={() => printCertificate(certificateHTML)} 
                     variant="outline" 
-                    className="border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 transition-all duration-200 transform hover:scale-105 shadow-lg h-12 px-6"
+                    className="border-2 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 transition-all duration-200 transform hover:scale-105 shadow-lg h-12 px-6 w-full sm:w-auto"
                   >
                     <FileText className="h-5 w-5 mr-2" />
-                    Print Certificate
+                    Print/Save Certificate
+                  </Button>
+                )}
+                {certificateHTML && !generatedCertificate.pdf && (
+                  <Button 
+                    onClick={() => downloadHTML(certificateHTML, `certificate_${generatedCertificate.certificateNumber}.html`)} 
+                    variant="secondary"
+                    className="h-12 px-6 w-full sm:w-auto"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Download HTML
                   </Button>
                 )}
               </div>
@@ -484,9 +515,10 @@ const CertificateForm = () => {
               )}
 
               {!generatedCertificate.pdf && certificateHTML && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 dark:bg-blue-950 dark:border-blue-700">
-                  <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">
-                    💡 Use the "Print Certificate" button to save as PDF using your browser's print function.
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 dark:bg-blue-950 dark:border-blue-700">
+                  <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed text-center">
+                    📱 <strong>Mobile Users:</strong> Use "Download HTML" then open the file to print as PDF<br />
+                    🖥️ <strong>Desktop Users:</strong> Use "Print Certificate" to save as PDF from your browser
                   </p>
                 </div>
               )}
