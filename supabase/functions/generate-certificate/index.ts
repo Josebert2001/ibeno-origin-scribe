@@ -235,7 +235,7 @@ function getEmbeddedTemplate(): string {
             </div>
             <div class="center-seal">
                 <div class="government-seal">
-                    <img src="data:image/png;base64,{{logoBase64}}" alt="Ibeno Local Government Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
+                    <img src="/logo.png" alt="Ibeno Local Government Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
                 </div>
                 <div class="seal-motto">UNITY AND LABOUR!</div>
             </div>
