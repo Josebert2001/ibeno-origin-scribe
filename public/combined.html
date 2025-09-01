@@ -50,6 +50,47 @@
             padding: 12mm;
         }
         
+        .corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(0,166,80,0.1) 70%, rgba(0,166,80,0.2) 100%);
+            border: 3px solid #00a650;
+            box-shadow: 0 4px 15px rgba(0,166,80,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+        }
+        
+        .corner img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+        
+        .corner-top-left {
+            top: -40px;
+            left: -40px;
+        }
+        
+        .corner-top-right {
+            top: -40px;
+            right: -40px;
+        }
+        
+        .corner-bottom-left {
+            bottom: -40px;
+            left: -40px;
+        }
+        
+        .corner-bottom-right {
+            bottom: -40px;
+            right: -40px;
+        }
+        
         .certificate-container::before {
             content: '';
             position: absolute;
@@ -291,6 +332,19 @@
 </head>
 <body>
     <div class="certificate-container">
+        <!-- Security corner logos -->
+        <div class="corner corner-top-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-top-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
         <div class="watermark">IBENO LOCAL GOVERNMENT</div>
         
         <div class="header">

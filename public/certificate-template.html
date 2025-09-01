@@ -76,41 +76,43 @@
         
         .corner {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(0,166,80,0.1) 70%, rgba(0,166,80,0.2) 100%);
+            border: 3px solid #00a650;
+            box-shadow: 0 4px 15px rgba(0,166,80,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 3;
         }
         
+        .corner img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+        
         .corner-top-left {
-            top: 20px;
-            left: 20px;
-            border-top: 8px solid #00a650;
-            border-left: 8px solid #00a650;
-            border-top-left-radius: 12px;
+            top: -40px;
+            left: -40px;
         }
         
         .corner-top-right {
-            top: 20px;
-            right: 20px;
-            border-top: 8px solid #00a650;
-            border-right: 8px solid #00a650;
-            border-top-right-radius: 12px;
+            top: -40px;
+            right: -40px;
         }
         
         .corner-bottom-left {
-            bottom: 20px;
-            left: 20px;
-            border-bottom: 8px solid #00a650;
-            border-left: 8px solid #00a650;
-            border-bottom-left-radius: 12px;
+            bottom: -40px;
+            left: -40px;
         }
         
         .corner-bottom-right {
-            bottom: 20px;
-            right: 20px;
-            border-bottom: 8px solid #00a650;
-            border-right: 8px solid #00a650;
-            border-bottom-right-radius: 12px;
+            bottom: -40px;
+            right: -40px;
         }
         
         .corner::before {
@@ -471,10 +473,18 @@
 <body>
     <div class="certificate-container">
         <div class="security-background"></div>
-        <div class="corner corner-top-left"></div>
-        <div class="corner corner-top-right"></div>
-        <div class="corner corner-bottom-left"></div>
-        <div class="corner corner-bottom-right"></div>
+        <div class="corner corner-top-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-top-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
         <div class="watermark">IBENO LOCAL GOVERNMENT</div>
         
         <!-- Security Microtext -->
