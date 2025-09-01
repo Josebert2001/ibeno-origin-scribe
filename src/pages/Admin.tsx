@@ -20,52 +20,9 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Check admin status when user changes
-        if (session?.user) {
-          setTimeout(async () => {
-            try {
-              const { data, error } = await supabase
-                .from('user_roles')
-                .select('role')
-                .eq('user_id', session.user.id)
-                .eq('role', 'admin')
-                .single();
-                
-              setIsAdmin(!error && !!data);
-            } catch (error) {
-              console.error('Error checking admin status:', error);
-              setIsAdmin(false);
-            } finally {
-              setLoading(false);
-            }
-          }, 0);
-        } else {
-          setIsAdmin(false);
-          setLoading(false);
-          navigate("/auth");
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    // Set loading to false immediately - no auth checks needed
+    setLoading(false);
+  }, []);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -95,32 +52,6 @@ const Admin = () => {
     );
   }
 
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 dark:from-red-950 dark:via-pink-950 dark:to-orange-950">
-        <Card className="max-w-md">
-          <CardHeader className="text-center">
-            <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-red-600 dark:text-red-400" />
-            </div>
-            <CardTitle className="text-red-800 dark:text-red-200">Access Denied</CardTitle>
-            <CardDescription className="text-red-600 dark:text-red-400">
-              You don't have admin permissions to access this page.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => navigate("/")} className="w-full">
-              Return to Home
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to auth
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
@@ -149,12 +80,12 @@ const Admin = () => {
             <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
               <UserIcon className="w-4 h-4 text-green-600" />
               <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                {user.email}
+                Public Access
               </span>
             </div>
-            <Button variant="outline" onClick={handleSignOut} className="hover:bg-red-50 hover:border-red-200 hover:text-red-600">
+            <Button variant="outline" onClick={() => navigate("/")} className="hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600">
               <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+              Return Home
             </Button>
           </div>
         </div>
