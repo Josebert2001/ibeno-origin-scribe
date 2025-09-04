@@ -192,6 +192,27 @@ const CertificateForm = () => {
         return;
       }
 
+      // Convert passport photo to base64
+      let passportPhotoBase64 = null;
+      if (data.passportPhoto && data.passportPhoto.size > 0) {
+        try {
+          const reader = new FileReader();
+          passportPhotoBase64 = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(data.passportPhoto);
+          });
+        } catch (error) {
+          console.error('Error converting passport photo to base64:', error);
+          toast({
+            title: "Error",
+            description: "Failed to process passport photo. Please try again.",
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
       // Generate fresh references for this certificate
       const [ourRefRes, yourRefRes, certNumRes] = await Promise.all([
         supabase.rpc('generate_our_ref'),
@@ -216,7 +237,8 @@ const CertificateForm = () => {
             bearerName: data.bearerName,
             nativeOf: data.nativeOf,
             village: data.village,
-            qrCodeData
+            qrCodeData,
+            passportPhoto: passportPhotoBase64
           }
         }),
         // Save to database concurrently

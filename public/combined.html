@@ -243,15 +243,50 @@
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+        }
+
+        .content-text {
+            flex: 1;
         }
         
-        .content p {
+        .content-text p {
             margin-bottom: 12px;
             color: #2c3e50;
         }
         
-        .content p strong {
+        .content-text p strong {
             color: #00a650;
+        }
+
+        .passport-photo {
+            flex-shrink: 0;
+            width: 80px;
+            height: 100px;
+            border: 2px solid #00a650;
+            border-radius: 6px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            overflow: hidden;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+
+        .passport-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .passport-placeholder {
+            color: #666;
+            font-size: 10px;
+            text-align: center;
+            padding: 8px;
         }
         
         .footer {
@@ -379,11 +414,14 @@
         <div class="title">Certificate of Origin</div>
 
         <div class="content">
-            <p>This is to formally certify that:</p>
-
-            <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
-
-            <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+            <div class="content-text">
+                <p>This is to formally certify that:</p>
+                <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+                <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+            </div>
+            <div class="passport-photo">
+                {{passportPhoto}}
+            </div>
         </div>
 
         <div class="footer">

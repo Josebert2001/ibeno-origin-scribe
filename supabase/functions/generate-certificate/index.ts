@@ -41,6 +41,7 @@ interface CertificateData {
   nativeOf: string;
   village: string;
   qrCodeData: string;
+  passportPhoto?: string; // Base64 encoded image data
 }
 
 // Input validation and sanitization functions
@@ -104,7 +105,8 @@ function validateCertificateData(data: any): CertificateData {
     bearerName: sanitizeInput(data.bearerName),
     nativeOf: sanitizeInput(data.nativeOf),
     village: sanitizeInput(data.village),
-    qrCodeData: data.qrCodeData // QR code data should be URL - validate separately
+    qrCodeData: data.qrCodeData, // QR code data should be URL - validate separately
+    passportPhoto: data.passportPhoto // Pass through passport photo if provided
   };
 }
 
@@ -202,9 +204,13 @@ function getEmbeddedTemplate(): string {
         .header h1 { font-size: 32px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 0.5px; margin: 0 0 12px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1px #00a650; }
         .header h2 { font-size: 22px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
         .title { font-size: 36px; color: #00aeef; margin: 15px 0 20px; font-family: 'Georgia', serif; font-style: italic; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); font-weight: bold; text-align: center; letter-spacing: 1px; }
-        .content { font-size: 18px; line-height: 1.6; text-align: justify; margin: 10px 0 20px; position: relative; z-index: 2; background: rgba(255,255,255,0.9); padding: 25px 30px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); flex-grow: 1; }
-        .content p { margin-bottom: 20px; color: #2c3e50; }
-        .content p strong { color: #00a650; font-size: 19px; letter-spacing: 0.5px; }
+        .content { font-size: 18px; line-height: 1.6; text-align: justify; margin: 10px 0 20px; position: relative; z-index: 2; background: rgba(255,255,255,0.9); padding: 25px 30px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); flex-grow: 1; display: flex; gap: 20px; }
+        .content-text { flex: 1; }
+        .content-text p { margin-bottom: 20px; color: #2c3e50; }
+        .content-text p strong { color: #00a650; font-size: 19px; letter-spacing: 0.5px; }
+        .passport-photo { flex-shrink: 0; width: 120px; height: 150px; border: 3px solid #00a650; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 10px; }
+        .passport-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .passport-placeholder { color: #666; font-size: 12px; text-align: center; padding: 10px; }
         .footer { margin-top: auto; position: relative; z-index: 2; }
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding: 0 10px; }
         .signature { text-align: center; background: rgba(255,255,255,0.95); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 14px; font-weight: 600; flex-shrink: 0; min-width: 180px; }
@@ -249,9 +255,14 @@ function getEmbeddedTemplate(): string {
         </div>
         <div class="title">Certificate of Origin</div>
         <div class="content">
-            <p>This is to formally certify that:</p>
-            <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
-            <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+            <div class="content-text">
+                <p>This is to formally certify that:</p>
+                <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+                <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
+            </div>
+            <div class="passport-photo">
+                {{passportPhoto}}
+            </div>
         </div>
         <div class="footer">
             <div class="footer-content">
@@ -341,6 +352,11 @@ serve(async (req) => {
     // Create QR code img tag for proper insertion
     const qrCodeImg = `<img src="${qrCode}" alt="QR Code for Certificate Verification" style="width: 100%; height: 100%; object-fit: contain;" />`;
     
+    // Create passport photo img tag or placeholder
+    const passportPhotoImg = certificateData.passportPhoto 
+      ? `<img src="${certificateData.passportPhoto}" alt="Passport Photo" style="width: 100%; height: 100%; object-fit: cover;" />`
+      : `<div class="passport-placeholder">Passport<br>Photo</div>`;
+    
     // Replace template placeholders with actual data using safe HTML replacement
     const certificateHTML = template
       .replace(/{{ourRef}}/g, certificateData.ourRef)
@@ -348,9 +364,12 @@ serve(async (req) => {
       .replace(/{{date}}/g, dateFormatted)
       .replace(/{{certificateNumber}}/g, certificateData.certificateNumber)
       .replace(/{{full_name}}/g, certificateData.bearerName)
+      .replace(/{{bearerName}}/g, certificateData.bearerName)
       .replace(/{{clan}}/g, certificateData.nativeOf)
+      .replace(/{{nativeOf}}/g, certificateData.nativeOf)
       .replace(/{{village}}/g, certificateData.village)
       .replace(/{{qrCode}}/g, qrCodeImg)
+      .replace(/{{passportPhoto}}/g, passportPhotoImg)
       .replace(/{{logoBase64}}/g, logoBase64);
 
     // Initialize Supabase client for storage
