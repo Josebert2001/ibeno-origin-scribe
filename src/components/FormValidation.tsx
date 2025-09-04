@@ -28,6 +28,13 @@ export const certificateSchema = z.object({
       
       return parsedDate <= today && parsedDate >= oneYearAgo;
     }, "Date must be within the last year and not in the future"),
+    
+  passport_photo: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, "Passport photo is required")
+    .refine((file) => file.size <= 5 * 1024 * 1024, "File size must be less than 5MB")
+    .refine((file) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), 
+      "Only JPEG, PNG, and WebP image files are allowed"),
 });
 
 export type CertificateFormData = z.infer<typeof certificateSchema>;

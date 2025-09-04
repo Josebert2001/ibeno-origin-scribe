@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarIcon, Download, FileText, User, MapPin, Calendar, CheckCircle, Loader2, Sparkles, Award } from "lucide-react";
+import { CalendarIcon, Download, FileText, User, MapPin, Calendar, CheckCircle, Loader2, Sparkles, Award, ImageIcon, Upload } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -33,7 +33,13 @@ const certificateSchema = z.object({
     .refine(val => !/<[^>]*>/.test(val), "HTML tags are not allowed"),
   dateIssued: z.date({
     required_error: "Date is required"
-  })
+  }),
+  passportPhoto: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, "Passport photo is required")
+    .refine((file) => file.size <= 5 * 1024 * 1024, "File size must be less than 5MB")
+    .refine((file) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), 
+      "Only JPEG, PNG, and WebP image files are allowed")
 });
 
 type CertificateFormData = z.infer<typeof certificateSchema>;
@@ -63,7 +69,8 @@ const CertificateForm = () => {
       bearerName: "",
       nativeOf: "",
       village: "",
-      dateIssued: new Date()
+      dateIssued: new Date(),
+      passportPhoto: new File([], '')
     }
   });
 
@@ -416,10 +423,66 @@ const CertificateForm = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-              </div>
+                 />
+               </div>
 
-              <div className="flex justify-end">
+               {/* Passport Photo Upload Field */}
+               <div className="space-y-6">
+                 <FormField
+                   control={form.control}
+                   name="passportPhoto"
+                   render={({ field: { onChange, value, ...field } }) => (
+                     <FormItem className="space-y-3">
+                       <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                         <ImageIcon className="h-4 w-4 text-red-600" />
+                         Passport Photo
+                       </FormLabel>
+                       <FormControl>
+                         <div className="border-2 border-dashed border-red-200 rounded-lg p-6 hover:border-red-300 transition-colors duration-200">
+                           <div className="text-center">
+                             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                             <div className="flex justify-center">
+                               <label
+                                 htmlFor="passport-upload"
+                                 className="cursor-pointer bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-md font-medium transition-colors duration-200 border border-red-200"
+                               >
+                                 Choose passport photo
+                                 <input
+                                   id="passport-upload"
+                                   type="file"
+                                   className="hidden"
+                                   accept="image/jpeg,image/jpg,image/png,image/webp"
+                                   onChange={(e) => {
+                                     const file = e.target.files?.[0];
+                                     if (file) {
+                                       onChange(file);
+                                     }
+                                   }}
+                                   {...field}
+                                 />
+                               </label>
+                             </div>
+                             {value?.name && (
+                               <p className="mt-2 text-sm text-gray-600">
+                                 Selected: {value.name}
+                               </p>
+                             )}
+                             <p className="mt-2 text-xs text-gray-500">
+                               PNG, JPG, WebP up to 5MB
+                             </p>
+                           </div>
+                         </div>
+                       </FormControl>
+                       <FormDescription>
+                         Upload a clear passport-style photo (required for certificate)
+                       </FormDescription>
+                       <FormMessage />
+                     </FormItem>
+                   )}
+                 />
+               </div>
+
+               <div className="flex justify-end">
                 <Button 
                   type="submit" 
                   disabled={loading} 
