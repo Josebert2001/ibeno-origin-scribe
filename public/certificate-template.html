@@ -270,16 +270,14 @@
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             flex-grow: 1;
-            display: flex;
-            gap: 20px;
         }
 
         .content-text {
-            flex: 1;
+            text-align: justify;
         }
         
         .content-text p {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #2c3e50;
         }
         
@@ -290,7 +288,7 @@
         }
 
         .passport-photo {
-            flex-shrink: 0;
+            float: right;
             width: 120px;
             height: 150px;
             border: 3px solid #00a650;
@@ -301,8 +299,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            align-self: flex-start;
-            margin-top: 10px;
+            margin: 0 0 15px 20px;
         }
 
         .passport-photo img {
@@ -565,14 +562,14 @@
 
         <div class="title">Certificate of Origin</div>
         <div class="content">
+            <div class="passport-photo">
+                {{passportPhoto}}
+            </div>
             <div class="content-text">
                 <p>This is to formally certify that:</p>
                 <p>The bearer <strong>{{bearerName}}</strong> is a native of Ekpuk <strong>{{nativeOf}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
                 <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
-                <p style="margin-top: 30px; font-style: italic; color: #666; font-size: 14px;">This certificate is valid for official identification and verification purposes.</p>
-            </div>
-            <div class="passport-photo">
-                {{passportPhoto}}
+                <p style="margin-top: 20px; font-style: italic; color: #666; font-size: 14px; clear: both;">This certificate is valid for official identification and verification purposes.</p>
             </div>
         </div>
 
