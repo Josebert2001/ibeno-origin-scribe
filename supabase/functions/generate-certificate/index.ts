@@ -208,7 +208,7 @@ function getEmbeddedTemplate(): string {
         .content-text { text-align: justify; }
         .content-text p { margin-bottom: 15px; color: #2c3e50; }
         .content-text p strong { color: #00a650; font-size: 19px; letter-spacing: 0.5px; }
-        .passport-photo { width: 100px; height: 120px; border: 3px solid #00a650; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .passport-photo { float: right; width: 110px; height: 140px; border: 3px solid #00a650; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; margin: 0 0 15px 20px; shape-outside: margin-box; }
         .passport-photo img { width: 100%; height: 100%; object-fit: cover; }
         .passport-placeholder { color: #666; font-size: 12px; text-align: center; padding: 10px; }
         .footer { margin-top: auto; position: relative; z-index: 2; }
@@ -255,17 +255,17 @@ function getEmbeddedTemplate(): string {
         </div>
         <div class="title">Certificate of Origin</div>
         <div class="content">
+            <div class="passport-photo">{{passportPhoto}}</div>
             <div class="content-text">
                 <p>This is to formally certify that:</p>
                 <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
                 <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
-                <p style="margin-top: 20px; font-style: italic; color: #666; font-size: 14px;">This certificate is valid for official identification and verification purposes.</p>
+                <p style="margin-top: 20px; font-style: italic; color: #666; font-size: 14px; clear: both;">This certificate is valid for official identification and verification purposes.</p>
             </div>
         </div>
         <div class="footer">
             <div class="footer-content">
                 <div class="qr-code">{{qrCode}}</div>
-                <div class="passport-photo">{{passportPhoto}}</div>
                 <div class="signature">Executive Chairman<br>Ibeno Local Government</div>
             </div>
         </div>
