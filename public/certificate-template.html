@@ -33,7 +33,7 @@
             background: #ffffff;
             position: relative;
             margin: 0 auto;
-            padding: 15mm;
+            padding: 10mm; /* further reduced padding for larger content area */
             box-sizing: border-box;
             font-family: 'Georgia', serif;
             display: flex;
@@ -129,57 +129,61 @@
         
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* reduced margin from 20px to 15px to save space */
             position: relative;
             z-index: 2;
-            padding-top: 10px;
+            padding-top: 5px; /* reduced padding from 10px to 5px */
         }
         
         .header h1 {
-            font-size: 32px;
+            font-size: 34px; /* increased font size for more prominence */
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-weight: 1000;
             color: #00a650;
-            letter-spacing: 0.5px;
-            margin: 0 0 12px 0;
+            letter-spacing: 1px;
+            margin: 0 0 15px 0; /* slightly increased margin for better spacing */
             padding: 0 5px;
             text-shadow: 2px 2px 3px rgba(0,0,0,0.15);
             white-space: nowrap;
             width: 100%;
             text-transform: uppercase;
-            -webkit-text-stroke: 1px #00a650;
+            -webkit-text-stroke: 1.5px #00a650; /* increased stroke width for better visibility */
         }
 
         .header h2 {
-            font-size: 22px;
+            font-size: 20px; /* reduced font size from 22px to 20px */
             color: #2c3e50;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 12px; /* reduced spacing from 18px to 12px */
             letter-spacing: 1.5px;
         }
 
         .header-line {
-            width: 180px;
-            height: 4px;
+            width: 200px; /* reduced width from 280px to 200px */
+            height: 3px; /* reduced height from 4px to 3px */
             background: linear-gradient(90deg, #00a650, #00aeef, #00a650);
-            margin: 12px auto;
+            margin: 10px auto 15px auto; /* reduced margins for tighter spacing */
             border-radius: 2px;
         }
 
         .reference-section {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            gap: 15px;
+            gap: 15px; /* reduced gap from 20px to 15px */
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* reduced margin from 25px to 15px */
             font-size: 13px;
             position: relative;
             z-index: 2;
-            padding: 0 10px;
+            padding: 0 10px; /* reduced padding from 15px to 10px */
         }
 
         .left-refs {
             text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .left-refs p {
@@ -200,8 +204,8 @@
         }
 
         .government-seal {
-            width: 100px;
-            height: 100px;
+            width: 120px; /* increased size for more prominence */
+            height: 120px; /* increased size for more prominence */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -210,26 +214,27 @@
             position: relative;
             background: #ffffff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            border: 3px solid #00a650;
+            border: 4px solid #00a650;
             padding: 4px;
             overflow: hidden;
         }
 
         .seal-motto {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: bold;
             color: #a60000;
-            margin-top: 4px;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
         }
 
         .right-info {
             text-align: right;
+            padding-top: 10px; /* added padding to align better with passport/logo section */
         }
 
         .right-info p {
             margin-bottom: 4px;
             color: #2c3e50;
-            font-weight: 500;
         }
 
         .right-info .address-line {
@@ -245,9 +250,9 @@
         }
         
         .title {
-            font-size: 36px;
+            font-size: 32px; /* reduced font size from 36px to 32px */
             color: #00aeef;
-            margin: 15px 0 20px;
+            margin: 15px 0 20px; /* reduced margins for tighter spacing */
             font-family: 'Georgia', serif;
             font-style: italic;
             position: relative;
@@ -259,38 +264,51 @@
         }
         
         .content {
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 20px;
+            line-height: 1.8; /* increased line spacing */
             text-align: justify;
-            margin: 10px 20px 20px 20px;
+            margin: 5px auto; /* centered margins */
             position: relative;
             z-index: 2;
             background: rgba(255,255,255,0.9);
-            padding: 25px 30px;
-            border-radius: 10px;
+            padding: 15px 25px;
+            border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            flex-grow: 1;
+            flex-grow: 0; /* prevent expanding beyond content */
+            font-family: 'Georgia', serif;
+            width: fit-content; /* adjust to content width */
+            max-width: 95%; /* prevent too wide content */
+            min-width: 80%; /* ensure minimum width */
         }
 
         .content-text {
             text-align: justify;
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* increased space between paragraphs */
         }
         
         .content-text p {
-            margin-bottom: 15px;
+            margin: 0; /* remove margins since we're using gap */
             color: #2c3e50;
+            text-align: justify;
+            font-family: 'Georgia', serif;
+            padding: 0 5px; /* small padding for text */
         }
         
         .content-text p strong {
             color: #00a650;
-            font-size: 19px;
+            font-size: 20px; /* reduced size of emphasized text */
             letter-spacing: 0.5px;
+            font-weight: bold;
+            text-decoration: underline;
+            font-family: 'Georgia', serif; /* ensuring consistent font */
         }
 
         .passport-photo {
-            float: right;
-            width: 110px;
-            height: 140px;
+            width: 120px; /* increased size for better visibility */
+            height: 150px; /* increased height proportionally */
             border: 3px solid #00a650;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -299,8 +317,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 0 15px 20px;
-            shape-outside: margin-box;
+            margin: 5px auto;
         }
 
         .passport-photo img {
@@ -320,6 +337,7 @@
             margin-top: auto;
             position: relative;
             z-index: 2;
+            margin-bottom: 10px; /* added bottom margin to lift footer from border */
         }
         
         .footer-content {
@@ -327,34 +345,34 @@
             justify-content: space-between;
             align-items: flex-end;
             width: 100%;
-            padding: 0 20px;
-            gap: 15px;
+            padding: 0 15px; /* reduced padding from 25px to 15px */
+            gap: 15px; /* reduced gap from 20px to 15px */
         }
         
         .signature {
             text-align: center;
             background: rgba(255,255,255,0.95);
-            padding: 15px 20px;
+            padding: 12px 20px; /* reduced padding from 15px 25px to 12px 20px */
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 14px;
+            font-size: 13px; /* reduced font size from 14px to 13px */
             font-weight: 600;
             flex-shrink: 0;
-            min-width: 180px;
+            min-width: 180px; /* reduced min-width from 200px to 180px */
         }
         
         .signature::before {
             content: '';
             display: block;
-            border-bottom: 2px solid #2c3e50;
-            height: 40px;
-            margin-bottom: 8px;
+            border-bottom: 2px dotted #2c3e50;
+            height: 40px; /* reduced height from 50px to 40px */
+            margin-bottom: 8px; /* reduced margin from 10px to 8px */
         }
         
 
         .qr-code {
-            width: 100px;
-            height: 100px;
+            width: 110px; /* increased size for better visibility */
+            height: 110px; /* increased size for better visibility */
             border: 2px solid #00a650;
             display: flex;
             align-items: center;
@@ -543,7 +561,11 @@
 
         <div class="reference-section">
             <div class="left-refs">
-                <p><span class="ref-label">Cert. No:</span> <span id="ref_number">{{certificateNumber}}</span></p>
+                <div class="passport-photo">
+                    <div class="passport-placeholder" id="passport_placeholder">
+                        Passport Photo
+                    </div>
+                </div>
             </div>
             
             <div class="center-seal">
@@ -556,22 +578,19 @@
             <div class="right-info">
                 <p class="address-line">Local Government Secretariat</p>
                 <p class="address-line">Upenekang Town</p>
-                <P class="address-line">Ibeno Local Government Area</P>
+                <p class="address-line">Ibeno Local Government Area</p>
                 <p class="address-line">Akwa Ibom State</p>
                 <p class="date-line" id="date">{{date}}</p>
+                <p><span class="ref-label">Cert. No:</span> <span id="ref_number">{{certificateNumber}}</span></p>
             </div>
         </div>
 
         <div class="title">Certificate of Origin</div>
         <div class="content">
-            <div class="passport-photo">
-                {{passportPhoto}}
-            </div>
             <div class="content-text">
                 <p>This is to formally certify that:</p>
-                <p>The bearer <strong>{{bearerName}}</strong> is a native of Ekpuk <strong>{{nativeOf}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+                <p>The bearer <strong id="bearer_name">{{bearerName}}</strong> is a native of Ekpuk <strong id="native_of">{{nativeOf}}</strong> in <strong id="village">{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
                 <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
-                <p style="margin-top: 20px; font-style: italic; color: #666; font-size: 14px; clear: both;">This certificate is valid for official identification and verification purposes.</p>
             </div>
         </div>
 
@@ -634,19 +653,36 @@
         }
 
         /**
-         * Triggers the print dialog for the certificate
+         * Inserts passport photo into the certificate
+         * @param {string} photoSrc - Base64 encoded image or image URL
          */
-        function printCertificate() {
-            window.print();
+        function insertPassportPhoto(photoSrc) {
+            const photoContainer = document.querySelector(".passport-photo");
+            // Clear placeholder
+            photoContainer.innerHTML = "";
+            
+            const photoImage = document.createElement("img");
+            photoImage.src = photoSrc;
+            photoImage.alt = "Passport Photo";
+            photoImage.style.width = "100%";
+            photoImage.style.height = "100%";
+            photoImage.style.objectFit = "cover";
+            
+            photoContainer.appendChild(photoImage);
         }
 
         /**
          * Complete certificate generation workflow
-         * @param {Object} certificateData - Complete certificate data including QR code
+         * @param {Object} certificateData - Complete certificate data including passport photo and QR code
          */
         function generateCertificate(certificateData) {
             // Populate all text fields
             populateCertificateTemplate(certificateData);
+            
+            // Insert passport photo if provided
+            if (certificateData.passportPhoto) {
+                insertPassportPhoto(certificateData.passportPhoto);
+            }
             
             // Insert QR code if provided
             if (certificateData.qrCode) {
@@ -660,14 +696,15 @@
             });
         }
 
-        // Example usage (this would be called from your main application):
+        // Example usage with passport photo:
         /*
         const sampleData = {
             refNumber: "ILG/AD/G/304/2024",
             date: "28th JULY 2025",
             full_name: "ELISHA EMMANUEL DAVID",
-            clan: "USUNG ANSE UTIARUK",
+            clan: "USUNG ANSE UTIARUK", 
             village: "UPENEKANG",
+            passportPhoto: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
             qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADI..."
         };
         

@@ -199,45 +199,82 @@ function getEmbeddedTemplate(): string {
         @page { size: B5; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', serif; background-color: #ffffff; width: 176mm; height: 250mm; margin: 0 auto; position: relative; overflow: hidden; padding: 0; }
-        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 15mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; border: 10px solid #00a650; box-shadow: inset 0 0 0 4px #ffffff, inset 0 0 0 8px #00aeef, inset 0 0 0 12px #ffffff, inset 0 0 0 16px #00a650, 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
-        .header { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; padding-top: 10px; }
-        .header h1 { font-size: 32px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 0.5px; margin: 0 0 12px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1px #00a650; }
-        .header h2 { font-size: 22px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
-        .title { font-size: 36px; color: #00aeef; margin: 15px 0 20px; font-family: 'Georgia', serif; font-style: italic; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); font-weight: bold; text-align: center; letter-spacing: 1px; }
-        .content { font-size: 18px; line-height: 1.6; text-align: justify; margin: 10px 20px 20px 20px; position: relative; z-index: 2; background: rgba(255,255,255,0.9); padding: 25px 30px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); flex-grow: 1; }
-        .content-text { text-align: justify; }
-        .content-text p { margin-bottom: 15px; color: #2c3e50; }
-        .content-text p strong { color: #00a650; font-size: 19px; letter-spacing: 0.5px; }
-        .passport-photo { float: right; width: 110px; height: 140px; border: 3px solid #00a650; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; margin: 0 0 15px 20px; shape-outside: margin-box; }
-        .passport-photo img { width: 100%; height: 100%; object-fit: cover; }
-        .passport-placeholder { color: #666; font-size: 12px; text-align: center; padding: 10px; }
-        .footer { margin-top: auto; position: relative; z-index: 2; }
-        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding: 0 20px; gap: 15px; }
-        .signature { text-align: center; background: rgba(255,255,255,0.95); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 14px; font-weight: 600; flex-shrink: 0; min-width: 180px; }
-        .signature::before { content: ''; display: block; border-bottom: 2px solid #2c3e50; height: 40px; margin-bottom: 8px; }
-        .qr-code { width: 100px; height: 100px; border: 2px solid #00a650; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #00a650; background: rgba(255,255,255,0.95); z-index: 2; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; flex-shrink: 0; }
-        .government-seal { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto; position: relative; background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 3px solid #00a650; padding: 4px; overflow: hidden; }
-        .reference-section { display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px; font-size: 13px; position: relative; z-index: 2; padding: 0 10px; }
-        .left-refs { text-align: left; }
+        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 10mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; border: 3px solid #2c3e50; box-shadow: inset 0 0 0 1px #ffffff, inset 0 0 0 4px #00a650, inset 0 0 0 6px #ffffff, inset 0 0 0 8px #00aeef, inset 0 0 0 10px #ffffff, inset 0 0 0 12px #2c3e50, 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; }
+        .security-background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(0, 166, 80, 0.02) 80px, rgba(0, 166, 80, 0.02) 160px), repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(0, 174, 239, 0.015) 60px, rgba(0, 174, 239, 0.015) 120px); z-index: 0; }
+        .corner { position: absolute; width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(0,166,80,0.1) 70%, rgba(0,166,80,0.2) 100%); border: 3px solid #00a650; box-shadow: 0 4px 15px rgba(0,166,80,0.3); display: flex; align-items: center; justify-content: center; z-index: 3; }
+        .corner img { width: 50px; height: 50px; object-fit: contain; opacity: 0.8; }
+        .corner-top-left { top: -40px; left: -40px; }
+        .corner-top-right { top: -40px; right: -40px; }
+        .corner-bottom-left { bottom: -40px; left: -40px; }
+        .corner-bottom-right { bottom: -40px; right: -40px; }
+        .corner::before { content: ''; position: absolute; width: 24px; height: 24px; border: 4px solid #00aeef; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .header { text-align: center; margin-bottom: 15px; position: relative; z-index: 2; padding-top: 5px; }
+        .header h1 { font-size: 34px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 1px; margin: 0 0 15px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1.5px #00a650; }
+        .header h2 { font-size: 20px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
+        .header-line { width: 200px; height: 3px; background: linear-gradient(90deg, #00a650, #00aeef, #00a650); margin: 10px auto 15px auto; border-radius: 2px; }
+        .reference-section { display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 15px; font-size: 13px; position: relative; z-index: 2; padding: 0 10px; }
+        .left-refs { text-align: left; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .left-refs p { margin-bottom: 6px; font-weight: 500; color: #2c3e50; }
         .left-refs .ref-label { font-weight: 600; color: #00a650; font-size: 15px; }
         .center-seal { text-align: center; justify-self: center; }
-        .seal-motto { font-size: 10px; font-weight: bold; color: #a60000; margin-top: 4px; }
-        .right-info { text-align: right; }
-        .right-info p { margin-bottom: 4px; color: #2c3e50; font-weight: 500; }
+        .government-seal { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px auto; position: relative; background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 4px solid #00a650; padding: 4px; overflow: hidden; }
+        .seal-motto { font-size: 12px; font-weight: bold; color: #a60000; margin-top: 6px; letter-spacing: 0.5px; }
+        .right-info { text-align: right; padding-top: 10px; }
+        .right-info p { margin-bottom: 4px; color: #2c3e50; }
         .right-info .address-line { font-size: 12px; color: #666; }
         .right-info .date-line { font-weight: 600; color: #00a650; margin-top: 6px; font-size: 12px; }
+        .title { font-size: 32px; color: #00aeef; margin: 15px 0 20px; font-family: 'Georgia', serif; font-style: italic; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); font-weight: bold; text-align: center; letter-spacing: 1px; }
+        .content { font-size: 20px; line-height: 1.8; text-align: justify; margin: 5px auto; position: relative; z-index: 2; background: rgba(255,255,255,0.9); padding: 15px 25px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); flex-grow: 0; font-family: 'Georgia', serif; width: fit-content; max-width: 95%; min-width: 80%; }
+        .content-text { text-align: justify; font-family: 'Georgia', serif; display: flex; flex-direction: column; gap: 15px; }
+        .content-text p { margin: 0; color: #2c3e50; text-align: justify; font-family: 'Georgia', serif; padding: 0 5px; }
+        .content-text p strong { color: #00a650; font-size: 20px; letter-spacing: 0.5px; font-weight: bold; text-decoration: underline; font-family: 'Georgia', serif; }
+        .passport-photo { width: 120px; height: 150px; border: 3px solid #00a650; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; margin: 5px auto; }
+        .passport-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .passport-placeholder { color: #666; font-size: 12px; text-align: center; padding: 10px; }
+        .footer { margin-top: auto; position: relative; z-index: 2; margin-bottom: 10px; }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding: 0 15px; gap: 15px; }
+        .signature { text-align: center; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; font-weight: 600; flex-shrink: 0; min-width: 180px; }
+        .signature::before { content: ''; display: block; border-bottom: 2px dotted #2c3e50; height: 40px; margin-bottom: 8px; }
+        .qr-code { width: 110px; height: 110px; border: 2px solid #00a650; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #00a650; background: rgba(255,255,255,0.95); z-index: 2; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; flex-shrink: 0; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 42px; color: rgba(0, 166, 80, 0.08); font-weight: bold; z-index: 0; white-space: nowrap; letter-spacing: 2px; width: 100%; text-align: center; overflow: hidden; }
+        .security-microtext { position: absolute; font-size: 4px; color: rgba(0, 166, 80, 0.3); font-weight: bold; line-height: 1; letter-spacing: 0.5px; z-index: 1; }
+        .microtext-top { top: 30px; left: 30px; right: 30px; text-align: center; }
+        .microtext-bottom { bottom: 30px; left: 30px; right: 30px; text-align: center; }
+        .microtext-left { left: 20px; top: 50%; transform: rotate(-90deg); transform-origin: left center; }
+        .microtext-right { right: 20px; top: 50%; transform: rotate(90deg); transform-origin: right center; }
     </style>
 </head>
 <body>
     <div class="certificate-container">
+        <div class="security-background"></div>
+        <div class="corner corner-top-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-top-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-left">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="corner corner-bottom-right">
+            <img src="/logo.png" alt="Security Logo" />
+        </div>
+        <div class="watermark">IBENO LOCAL GOVERNMENT</div>
+        
+        <div class="security-microtext microtext-top">ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE</div>
+        <div class="security-microtext microtext-bottom">ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE</div>
+        <div class="security-microtext microtext-left">ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE</div>
+        <div class="security-microtext microtext-right">ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE</div>
+        
         <div class="header">
             <h1>IBENO LOCAL GOVERNMENT</h1>
             <h2>AKWA IBOM STATE</h2>
+            <div class="header-line"></div>
         </div>
+        
         <div class="reference-section">
             <div class="left-refs">
-                <p><span class="ref-label">Cert. No:</span> <span>{{certificateNumber}}</span></p>
+                <div class="passport-photo">{{passportPhoto}}</div>
             </div>
             <div class="center-seal">
                 <div class="government-seal">
@@ -251,18 +288,19 @@ function getEmbeddedTemplate(): string {
                 <p class="address-line">Ibeno Local Government Area</p>
                 <p class="address-line">Akwa Ibom State</p>
                 <p class="date-line">{{date}}</p>
+                <p><span class="ref-label">Cert. No:</span> <span>{{certificateNumber}}</span></p>
             </div>
         </div>
+        
         <div class="title">Certificate of Origin</div>
         <div class="content">
-            <div class="passport-photo">{{passportPhoto}}</div>
             <div class="content-text">
                 <p>This is to formally certify that:</p>
                 <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
                 <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
-                <p style="margin-top: 20px; font-style: italic; color: #666; font-size: 14px; clear: both;">This certificate is valid for official identification and verification purposes.</p>
             </div>
         </div>
+        
         <div class="footer">
             <div class="footer-content">
                 <div class="qr-code">{{qrCode}}</div>
