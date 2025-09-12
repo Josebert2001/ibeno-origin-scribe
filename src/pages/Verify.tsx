@@ -16,6 +16,7 @@ interface Certificate {
   certificate_number: string;
   date_issued: string;
   status: string;
+  bearer_name: string;
 }
 
 
@@ -226,6 +227,16 @@ const Verify = () => {
                       </Label>
                       <p className="text-base font-medium bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg">
                         {format(new Date(certificate.date_issued), "PPP")}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Bearer Name
+                      </Label>
+                      <p className="text-lg font-semibold bg-emerald-50 dark:bg-emerald-900/20 px-3 py-2 rounded-lg text-emerald-800 dark:text-emerald-200">
+                        {certificate.bearer_name}
                       </p>
                     </div>
 

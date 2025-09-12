@@ -43,7 +43,7 @@ serve(async (req) => {
     // Step 1: try by certificate_number
     const { data: byNumber, error: byNumberError } = await supabase
       .from('certificates')
-      .select('certificate_number, date_issued, status')
+      .select('certificate_number, date_issued, status, bearer_name')
       .eq('certificate_number', q)
       .maybeSingle();
 
@@ -57,7 +57,7 @@ serve(async (req) => {
     if (!result) {
       const { data: byId, error: byIdError } = await supabase
         .from('certificates')
-        .select('certificate_number, date_issued, status')
+        .select('certificate_number, date_issued, status, bearer_name')
         .eq('id', q)
         .maybeSingle();
 
@@ -75,7 +75,7 @@ serve(async (req) => {
       );
     }
 
-    // Only return non-PII fields
+    // Return certificate details including bearer name
     return new Response(
       JSON.stringify({
         found: true,
@@ -83,6 +83,7 @@ serve(async (req) => {
           certificate_number: result.certificate_number,
           date_issued: result.date_issued,
           status: result.status,
+          bearer_name: result.bearer_name,
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
