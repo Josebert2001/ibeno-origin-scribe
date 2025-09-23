@@ -33,21 +33,16 @@
             background: #ffffff;
             position: relative;
             margin: 0 auto;
-            padding: 10mm; /* further reduced padding for larger content area */
+            padding: 15mm; /* increased padding to accommodate SVG border */
             box-sizing: border-box;
             font-family: 'Georgia', serif;
             display: flex;
             flex-direction: column;
-            border: 3px solid #2c3e50;
-            box-shadow: 
-                inset 0 0 0 1px #ffffff,
-                inset 0 0 0 4px #00a650,
-                inset 0 0 0 6px #ffffff,
-                inset 0 0 0 8px #00aeef,
-                inset 0 0 0 10px #ffffff,
-                inset 0 0 0 12px #2c3e50,
-                0 8px 25px rgba(0,0,0,0.15);
             overflow: hidden;
+            background-image: url('/border.svg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
         }
         
         .security-background {
@@ -74,58 +69,7 @@
             z-index: 0;
         }
         
-        .corner {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(0,166,80,0.1) 70%, rgba(0,166,80,0.2) 100%);
-            border: 3px solid #00a650;
-            box-shadow: 0 4px 15px rgba(0,166,80,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 3;
-        }
-        
-        .corner img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            opacity: 0.8;
-        }
-        
-        .corner-top-left {
-            top: -40px;
-            left: -40px;
-        }
-        
-        .corner-top-right {
-            top: -40px;
-            right: -40px;
-        }
-        
-        .corner-bottom-left {
-            bottom: -40px;
-            left: -40px;
-        }
-        
-        .corner-bottom-right {
-            bottom: -40px;
-            right: -40px;
-        }
-        
-        .corner::before {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border: 4px solid #00aeef;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+        /* SVG border styling - corners and decorative elements now handled by the SVG */
         
         .header {
             text-align: center;
@@ -505,14 +449,12 @@
             }
             
             .certificate-container {
-                border: 12px solid #00a650 !important;
+                background-image: url('/border.svg') !important;
+                background-size: 100% 100% !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
                 break-inside: avoid;
-                background: white !important;
-            }
-
-            .certificate-container::before {
-                border: 2px solid #00a650 !important;
-                background: none !important;
+                background-color: white !important;
             }
             
             .qr-code img {
@@ -525,18 +467,6 @@
 <body>
     <div class="certificate-container">
         <div class="security-background"></div>
-        <div class="corner corner-top-left">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-top-right">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-bottom-left">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-bottom-right">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
         <div class="watermark">IBENO LOCAL GOVERNMENT</div>
         
         <!-- Security Microtext -->

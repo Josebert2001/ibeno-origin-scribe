@@ -199,15 +199,9 @@ function getEmbeddedTemplate(): string {
         @page { size: B5; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', serif; background-color: #ffffff; width: 176mm; height: 250mm; margin: 0 auto; position: relative; overflow: hidden; padding: 0; }
-        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 10mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; border: 3px solid #2c3e50; box-shadow: inset 0 0 0 1px #ffffff, inset 0 0 0 4px #00a650, inset 0 0 0 6px #ffffff, inset 0 0 0 8px #00aeef, inset 0 0 0 10px #ffffff, inset 0 0 0 12px #2c3e50, 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; }
+        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 15mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; overflow: hidden; background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="176mm" height="250mm" viewBox="0 0 17600 25000"><defs><style>.fil0{fill:%2300A859}</style></defs><g><path class="fil0" d="M17876.36-421.79l0 25843.58-18190.57 0 0-25843.58 18190.57 0zm0 25843.58l0 0 0-25784.71-18190.57 0 0 25784.71 18190.57 0z"/></g></svg>'); background-size: 100% 100%; background-repeat: no-repeat; background-position: center; }
         .security-background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(0, 166, 80, 0.02) 80px, rgba(0, 166, 80, 0.02) 160px), repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(0, 174, 239, 0.015) 60px, rgba(0, 174, 239, 0.015) 120px); z-index: 0; }
-        .corner { position: absolute; width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(0,166,80,0.1) 70%, rgba(0,166,80,0.2) 100%); border: 3px solid #00a650; box-shadow: 0 4px 15px rgba(0,166,80,0.3); display: flex; align-items: center; justify-content: center; z-index: 3; }
-        .corner img { width: 50px; height: 50px; object-fit: contain; opacity: 0.8; }
-        .corner-top-left { top: -40px; left: -40px; }
-        .corner-top-right { top: -40px; right: -40px; }
-        .corner-bottom-left { bottom: -40px; left: -40px; }
-        .corner-bottom-right { bottom: -40px; right: -40px; }
-        .corner::before { content: ''; position: absolute; width: 24px; height: 24px; border: 4px solid #00aeef; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        /* SVG border styling - corners and decorative elements now handled by the SVG */
         .header { text-align: center; margin-bottom: 15px; position: relative; z-index: 2; padding-top: 5px; }
         .header h1 { font-size: 34px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 1px; margin: 0 0 15px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1.5px #00a650; }
         .header h2 { font-size: 20px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
@@ -247,18 +241,6 @@ function getEmbeddedTemplate(): string {
 <body>
     <div class="certificate-container">
         <div class="security-background"></div>
-        <div class="corner corner-top-left">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-top-right">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-bottom-left">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
-        <div class="corner corner-bottom-right">
-            <img src="/logo.png" alt="Security Logo" />
-        </div>
         <div class="watermark">IBENO LOCAL GOVERNMENT</div>
         
         <div class="security-microtext microtext-top">ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE•ABASI ULOK-ULOK AYE AYE</div>
