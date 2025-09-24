@@ -199,7 +199,24 @@ function getEmbeddedTemplate(): string {
         @page { size: B5; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', serif; background-color: #ffffff; width: 176mm; height: 250mm; margin: 0 auto; position: relative; overflow: hidden; padding: 0; }
-        .certificate-container { width: 176mm; height: 250mm; background: #ffffff; position: relative; margin: 0 auto; padding: 15mm; box-sizing: border-box; font-family: 'Georgia', serif; display: flex; flex-direction: column; overflow: hidden; background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="176mm" height="250mm" viewBox="0 0 17600 25000"><defs><style>.fil0{fill:%2300A859}</style></defs><g><path class="fil0" d="M17876.36-421.79l0 25843.58-18190.57 0 0-25843.58 18190.57 0zm0 25843.58l0 0 0-25784.71-18190.57 0 0 25784.71 18190.57 0z"/></g></svg>'); background-size: 100% 100%; background-repeat: no-repeat; background-position: center; }
+        .certificate-container { 
+            width: 176mm; 
+            height: 250mm; 
+            background: #ffffff; 
+            position: relative; 
+            margin: 0 auto; 
+            padding: 20mm; 
+            box-sizing: border-box; 
+            font-family: 'Georgia', serif; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+            border: 8px solid #00A859;
+            background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17600 25000"%3E%3Cg fill="%2300A859"%3E%3Cpath d="M17876.36-421.79l0 25843.58-18190.57 0 0-25843.58 18190.57 0zm0 25843.58l0 0 0-25784.71-18190.57 0 0 25784.71 18190.57 0z"/%3E%3Cpath d="M17817.5-304.05l0 25666.98-18072.84 0 0-25666.98 18072.84 0zm-58.87 25608.11l0 0 0-25608.11-17955.09 0 0 25608.11 17955.09 0z"/%3E%3Cpath d="M17699.76-245.19l0 25490.37-17837.37 0 0-25490.37 17837.37 0zm0 25490.37l0 0 0-25431.5-17837.37 0 0 25431.5 17837.37 0z"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: 100% 100%; 
+            background-repeat: no-repeat; 
+            background-position: center;
+        }
         .security-background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(0, 166, 80, 0.02) 80px, rgba(0, 166, 80, 0.02) 160px), repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(0, 174, 239, 0.015) 60px, rgba(0, 174, 239, 0.015) 120px); z-index: 0; }
         /* SVG border styling - corners and decorative elements now handled by the SVG */
         .header { text-align: center; margin-bottom: 15px; position: relative; z-index: 2; padding-top: 5px; }
