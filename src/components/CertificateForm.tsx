@@ -227,6 +227,13 @@ const CertificateForm = () => {
       const qrCodeData = `${window.location.origin}/verify?cert_id=${certificateNumber}`;
 
       // Generate certificate and save to database in parallel
+      console.log('🔄 Starting certificate generation...', {
+        ourRef,
+        yourRef,
+        certificateNumber,
+        bearerName: data.bearerName
+      });
+
       const [certificateGenResponse] = await Promise.all([
         supabase.functions.invoke('generate-certificate', {
           body: {
@@ -257,11 +264,28 @@ const CertificateForm = () => {
         })
       ]);
 
+      console.log('📋 Certificate generation response:', {
+        error: certificateGenResponse.error,
+        data: certificateGenResponse.data ? {
+          success: certificateGenResponse.data.success,
+          hasHtml: !!certificateGenResponse.data.html,
+          htmlLength: certificateGenResponse.data.html?.length,
+          htmlUrl: certificateGenResponse.data.htmlUrl,
+          certificateNumber: certificateGenResponse.data.certificateNumber
+        } : null
+      });
+
       if (certificateGenResponse.error) {
+        console.error('❌ Certificate generation failed:', certificateGenResponse.error);
         throw new Error(certificateGenResponse.error.message || 'Failed to generate certificate');
       }
 
       const certificateData = certificateGenResponse.data;
+      
+      if (!certificateData || !certificateData.success) {
+        console.error('❌ Certificate generation returned invalid data:', certificateData);
+        throw new Error('Certificate generation failed - invalid response');
+      }
       
       // Update database with storage URLs if available
       const updateData: any = {};
@@ -273,6 +297,7 @@ const CertificateForm = () => {
       }
       
       if (Object.keys(updateData).length > 0) {
+        console.log('📝 Updating database with storage URLs:', updateData);
         await supabase
           .from('certificates')
           .update(updateData)
@@ -280,6 +305,13 @@ const CertificateForm = () => {
       }
       
       // Store HTML separately and set certificate data
+      console.log('✅ Certificate generation completed successfully', {
+        certificateNumber,
+        hasHtml: !!certificateData.html,
+        htmlLength: certificateData.html?.length,
+        htmlUrl: certificateData.htmlUrl
+      });
+
       setCertificateHTML(certificateData.html || "");
       setGeneratedCertificate({
         pdf: certificateData.pdf,
@@ -298,10 +330,14 @@ const CertificateForm = () => {
       form.reset();
       
     } catch (error: any) {
-      console.error('Certificate creation error:', error);
+      console.error('❌ Certificate creation error:', {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+      });
       toast({
         title: "Error",
-        description: error.message || "Failed to create certificate",
+        description: `Failed to create certificate: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {

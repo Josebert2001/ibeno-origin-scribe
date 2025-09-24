@@ -1,38 +1,12 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none';",
 };
 
-// Rate limiting map (simple in-memory for now)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-const RATE_LIMIT = {
-  maxRequests: 10, // 10 requests per window
-  windowMs: 15 * 60 * 1000, // 15 minutes
-};
-
-function checkRateLimit(clientId: string): { allowed: boolean; remaining: number } {
-  const now = Date.now();
-  const entry = rateLimitMap.get(clientId);
-  
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(clientId, { count: 1, resetTime: now + RATE_LIMIT.windowMs });
-    return { allowed: true, remaining: RATE_LIMIT.maxRequests - 1 };
-  }
-  
-  if (entry.count >= RATE_LIMIT.maxRequests) {
-    return { allowed: false, remaining: 0 };
-  }
-  
-  entry.count++;
-  return { allowed: true, remaining: RATE_LIMIT.maxRequests - entry.count };
-}
-
-interface CertificateData {
+interface CertificateRequest {
   ourRef: string;
   yourRef: string;
   dateIssued: string;
@@ -41,112 +15,251 @@ interface CertificateData {
   nativeOf: string;
   village: string;
   qrCodeData: string;
-  passportPhoto?: string; // Base64 encoded image data
+  passportPhoto?: string;
 }
 
-// Input validation and sanitization functions
-function sanitizeInput(input: string): string {
-  if (typeof input !== 'string') {
-    throw new Error('Input must be a string');
-  }
-  
-  // Remove HTML tags and encode special characters
-  return input
-    .replace(/[<>]/g, '') // Remove < and > to prevent HTML injection
-    .replace(/[&]/g, '&amp;') // Encode ampersands
-    .replace(/['"]/g, '') // Remove quotes to prevent attribute injection
-    .trim()
-    .substring(0, 100); // Limit length
+interface TemplateData {
+  ourRef: string;
+  yourRef: string;
+  dateIssued: string;
+  certificateNumber: string;
+  bearerName: string;
+  nativeOf: string;
+  village: string;
+  qrCodeData: string;
+  logoBase64: string;
+  passportPhoto?: string;
 }
 
-function validateCertificateData(data: any): CertificateData {
-  if (!data || typeof data !== 'object') {
-    throw new Error('Invalid certificate data');
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
 
-  const requiredFields = ['ourRef', 'yourRef', 'dateIssued', 'certificateNumber', 'bearerName', 'nativeOf', 'village', 'qrCodeData'];
-  
-  for (const field of requiredFields) {
-    if (!data[field] || typeof data[field] !== 'string') {
-      throw new Error(`Missing or invalid field: ${field}`);
+  try {
+    console.log('🚀 Certificate generation request started:', {
+      timestamp: new Date().toISOString(),
+      client_id: req.headers.get('x-forwarded-for'),
+      method: req.method
+    });
+
+    if (req.method !== 'POST') {
+      console.error('❌ Invalid method:', req.method);
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+        status: 405,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
+
+    const body = await req.json();
+    console.log('📝 Certificate generation request:', {
+      timestamp: new Date().toISOString(),
+      client_id: req.headers.get('x-forwarded-for'),
+      bearer_name: body.bearerName
+    });
+
+    const {
+      ourRef,
+      yourRef,
+      dateIssued,
+      certificateNumber,
+      bearerName,
+      nativeOf,
+      village,
+      qrCodeData,
+      passportPhoto
+    }: CertificateRequest = body;
+
+    // Validate required fields
+    if (!ourRef || !yourRef || !dateIssued || !certificateNumber || !bearerName || !nativeOf || !village || !qrCodeData) {
+      console.error('❌ Missing required fields:', { ourRef, yourRef, dateIssued, certificateNumber, bearerName, nativeOf, village, qrCodeData });
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('✅ Starting certificate generation process...');
+
+    // Generate QR code
+    console.log('🔄 Generating QR code...');
+    let qrCodeBase64;
+    try {
+      const qrResponse = await fetch('https://api.qrserver.com/v1/create-qr-code/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `data=${encodeURIComponent(qrCodeData)}&size=150x150&format=png`
+      });
+
+      if (!qrResponse.ok) {
+        throw new Error(`QR code generation failed: ${qrResponse.statusText}`);
+      }
+
+      const qrBuffer = await qrResponse.arrayBuffer();
+      const qrBytes = new Uint8Array(qrBuffer);
+      let qrBinary = '';
+      const chunkSize = 8192;
+      
+      for (let i = 0; i < qrBytes.length; i += chunkSize) {
+        const chunk = qrBytes.slice(i, i + chunkSize);
+        qrBinary += String.fromCharCode.apply(null, Array.from(chunk));
+      }
+      
+      qrCodeBase64 = `data:image/png;base64,${btoa(qrBinary)}`;
+      console.log('✅ QR code generated successfully');
+    } catch (error) {
+      console.error('❌ QR code generation failed:', error);
+      qrCodeBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='; // 1x1 transparent PNG
+    }
+
+    // Load certificate template
+    console.log('🔄 Loading certificate template...');
+    let templateHTML;
+    try {
+      templateHTML = await loadCertificateTemplate();
+      console.log('✅ Template loaded successfully, length:', templateHTML.length);
+    } catch (error) {
+      console.error('❌ Failed to load template from storage, using embedded template:', error);
+      templateHTML = getEmbeddedTemplate();
+      console.log('✅ Using embedded template, length:', templateHTML.length);
+    }
+
+    // Load logo
+    console.log('🔄 Loading logo...');
+    let logoBase64;
+    try {
+      logoBase64 = await loadLogo();
+      console.log('✅ Logo loaded successfully');
+    } catch (error) {
+      console.error('❌ Logo loading failed:', error);
+      logoBase64 = getDefaultLogoBase64();
+      console.log('✅ Using default logo');
+    }
+
+    // Populate the template
+    console.log('🔄 Populating template with data...');
+    try {
+      const populatedHTML = populateTemplate(templateHTML, {
+        ourRef,
+        yourRef,
+        dateIssued,
+        certificateNumber,
+        bearerName,
+        nativeOf,
+        village,
+        qrCodeData: qrCodeBase64,
+        logoBase64,
+        passportPhoto
+      });
+      console.log('✅ Template populated successfully, final length:', populatedHTML.length);
+
+      // Check if the template contains border styling
+      const hasBorder = populatedHTML.includes('border:') || populatedHTML.includes('border-');
+      console.log('🎨 Template border check:', hasBorder ? 'Border styling found' : 'No border styling found');
+
+      // Save to storage if available
+      console.log('🔄 Attempting to save to Supabase Storage...');
+      let htmlUrl = null;
+      let pdfUrl = null;
+      
+      try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL');
+        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+        
+        if (supabaseUrl && supabaseKey) {
+          const supabase = createClient(supabaseUrl, supabaseKey);
+          const filename = `certificate_${certificateNumber.replace(/\s+/g, '_')}`;
+          
+          // Save HTML
+          const { data: htmlData, error: htmlError } = await supabase.storage
+            .from('certificates')
+            .upload(`2025/${filename}.html`, populatedHTML, {
+              contentType: 'text/html',
+              upsert: true
+            });
+          
+          if (htmlError) {
+            console.error('❌ HTML storage error:', htmlError);
+          } else {
+            htmlUrl = `${supabaseUrl}/storage/v1/object/public/certificates/2025/${filename}.html`;
+            console.log('✅ Certificate HTML saved to storage:', htmlUrl);
+          }
+        } else {
+          console.warn('⚠️ Supabase storage not configured');
+        }
+      } catch (storageError) {
+        console.error('❌ Storage operation failed:', storageError);
+      }
+
+      console.log('🎉 Certificate generation completed successfully');
+      return new Response(JSON.stringify({
+        success: true,
+        html: populatedHTML,
+        htmlUrl,
+        pdfUrl,
+        qrCode: qrCodeBase64,
+        certificateNumber,
+        debug: {
+          templateLength: populatedHTML.length,
+          hasBorder,
+          timestamp: new Date().toISOString()
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+      
+    } catch (templateError) {
+      console.error('❌ Template population failed:', templateError);
+      throw new Error(`Template processing failed: ${templateError.message}`);
+    }
+
+  } catch (error) {
+    console.error('💥 Certificate generation error:', {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+    return new Response(JSON.stringify({ 
+      error: error.message || 'Failed to generate certificate',
+      details: error.stack || 'No stack trace available',
+      timestamp: new Date().toISOString()
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
+});
 
-  // Validate date format
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(data.dateIssued)) {
-    throw new Error('Invalid date format. Expected YYYY-MM-DD');
-  }
-
-  // Validate certificate number format
-  const certRegex = /^IBN\d{2}\s\d{4}$/;
-  if (!certRegex.test(data.certificateNumber)) {
-    throw new Error('Invalid certificate number format');
-  }
-
-  // Validate name lengths
-  if (data.bearerName.length < 2 || data.bearerName.length > 100) {
-    throw new Error('Bearer name must be between 2 and 100 characters');
-  }
-
-  if (data.nativeOf.length < 2 || data.nativeOf.length > 100) {
-    throw new Error('Native of must be between 2 and 100 characters');
-  }
-
-  if (data.village.length < 2 || data.village.length > 100) {
-    throw new Error('Village must be between 2 and 100 characters');
-  }
-
-  return {
-    ourRef: sanitizeInput(data.ourRef),
-    yourRef: sanitizeInput(data.yourRef),
-    dateIssued: data.dateIssued,
-    certificateNumber: sanitizeInput(data.certificateNumber),
-    bearerName: sanitizeInput(data.bearerName),
-    nativeOf: sanitizeInput(data.nativeOf),
-    village: sanitizeInput(data.village),
-    qrCodeData: data.qrCodeData, // QR code data should be URL - validate separately
-    passportPhoto: data.passportPhoto // Pass through passport photo if provided
-  };
-}
-
+// Function to load certificate template from Supabase Storage
 async function loadCertificateTemplate(): Promise<string> {
   try {
-    // Load the template from Supabase Storage or fallback to GitHub raw content
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    let templateUrl: string;
     
-    if (supabaseUrl) {
-      // Try Supabase Storage first
-      templateUrl = `${supabaseUrl}/storage/v1/object/public/static-assets/certificate-template.html`;
-    } else {
-      // Fallback to a more reliable source
-      templateUrl = 'https://raw.githubusercontent.com/your-repo/ibeno-origin-scribe/main/public/certificate-template.html';
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL not configured');
     }
     
-    const templateResponse = await fetch(templateUrl);
-    if (!templateResponse.ok) {
-      // If Supabase Storage fails, try the embedded template as fallback
-      if (supabaseUrl && templateUrl.includes('supabase.co')) {
-        console.warn('Supabase Storage template fetch failed, using embedded template');
-        return getEmbeddedTemplate();
-      }
-      throw new Error(`Failed to fetch template from ${templateUrl}: ${templateResponse.statusText}`);
+    // Try to load from public bucket
+    const templateUrl = `${supabaseUrl}/storage/v1/object/public/static-assets/certificate-template.html`;
+    const response = await fetch(templateUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Template fetch failed: ${response.statusText}`);
     }
-    return await templateResponse.text();
+    
+    return await response.text();
   } catch (error) {
-    console.error('Error loading certificate template:', error);
-    // Final fallback to embedded template
-    console.warn('Using embedded template as final fallback');
-    return getEmbeddedTemplate();
+    console.error('Template loading error:', error);
+    throw error;
   }
 }
 
-async function loadLogoAsBase64(): Promise<string> {
+// Function to load logo from storage
+async function loadLogo(): Promise<string> {
   try {
-    // Load the logo from Supabase Storage or fallback
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    let logoUrl: string;
+    let logoUrl;
     
     if (supabaseUrl) {
       // Try Supabase Storage first
@@ -214,7 +327,6 @@ function getEmbeddedTemplate(): string {
             border: 6px solid #00A859;
         }
         .security-background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, rgba(0, 166, 80, 0.02) 80px, rgba(0, 166, 80, 0.02) 160px), repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(0, 174, 239, 0.015) 60px, rgba(0, 174, 239, 0.015) 120px); z-index: 0; }
-        /* SVG border styling - corners and decorative elements now handled by the SVG */
         .header { text-align: center; margin-bottom: 15px; position: relative; z-index: 2; padding-top: 5px; }
         .header h1 { font-size: 34px; font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 1000; color: #00a650; letter-spacing: 1px; margin: 0 0 15px 0; padding: 0 5px; text-shadow: 2px 2px 3px rgba(0,0,0,0.15); white-space: nowrap; width: 100%; text-transform: uppercase; -webkit-text-stroke: 1.5px #00a650; }
         .header h2 { font-size: 20px; color: #2c3e50; font-weight: 600; margin-bottom: 12px; letter-spacing: 1.5px; }
@@ -269,21 +381,27 @@ function getEmbeddedTemplate(): string {
         
         <div class="reference-section">
             <div class="left-refs">
-                <div class="passport-photo">{{passportPhoto}}</div>
+                <div class="passport-photo" id="passport_photo_placeholder">
+                    <div class="passport-placeholder">Passport<br>Photo</div>
+                </div>
             </div>
             <div class="center-seal">
                 <div class="government-seal">
-                    <img src="/logo.png" alt="Ibeno Local Government Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
+                    <img id="logo_placeholder" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="Ibeno Local Government Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
                 </div>
                 <div class="seal-motto">UNITY AND LABOUR!</div>
             </div>
             <div class="right-info">
+                <p class="ref-label">Our Ref:</p>
+                <p id="our_ref">REF-NUMBER</p>
+                <p class="ref-label">Your Ref:</p>
+                <p id="your_ref">YOUR-REF</p>
                 <p class="address-line">Local Government Secretariat</p>
                 <p class="address-line">Upenekang Town</p>
                 <p class="address-line">Ibeno Local Government Area</p>
                 <p class="address-line">Akwa Ibom State</p>
-                <p class="date-line">{{date}}</p>
-                <p><span class="ref-label">Cert. No:</span> <span>{{certificateNumber}}</span></p>
+                <p class="date-line" id="date">DATE</p>
+                <p><span class="ref-label">Cert. No:</span> <span id="certificate_number">CERT-NUMBER</span></p>
             </div>
         </div>
         
@@ -291,15 +409,21 @@ function getEmbeddedTemplate(): string {
         <div class="content">
             <div class="content-text">
                 <p>This is to formally certify that:</p>
-                <p>The bearer <strong>{{full_name}}</strong> is a native of Ekpuk <strong>{{clan}}</strong> in <strong>{{village}}</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
+                <p>The bearer <strong id="bearer_name">BEARER_NAME</strong> is a native of Ekpuk <strong id="native_of">NATIVE_OF</strong> in <strong id="village">VILLAGE</strong> Village, and a recognized indigene of Ibeno Local Government Area, Akwa Ibom State.</p>
                 <p>The bearer is therefore entitled to all the rights, recognition, and assistance that come with being a native of this esteemed locality.</p>
             </div>
         </div>
         
         <div class="footer">
             <div class="footer-content">
-                <div class="qr-code">{{qrCode}}</div>
-                <div class="signature">Executive Chairman<br>Ibeno Local Government</div>
+                <div class="qr-code" id="qr_code_placeholder">
+                    QR Code for Verification
+                </div>
+                <div class="signature">
+                    HON. SUNDAY FRIDAY ADIAKPAN<br>
+                    EXECUTIVE CHAIRMAN<br>
+                    IBENO L.G.A.
+                </div>
             </div>
         </div>
     </div>
@@ -307,220 +431,61 @@ function getEmbeddedTemplate(): string {
 </html>`;
 }
 
-// Default logo as base64 (simple placeholder)
-function getDefaultLogoBase64(): string {
-  // This is a simple 1x1 transparent PNG as a fallback
-  return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+function populateTemplate(template: string, data: TemplateData): string {
+  let result = template;
+  
+  // Replace placeholders with actual data
+  result = result.replace(/REF-NUMBER/g, data.ourRef);
+  result = result.replace(/YOUR-REF/g, data.yourRef);
+  result = result.replace(/DATE/g, formatDate(data.dateIssued));
+  result = result.replace(/CERT-NUMBER/g, data.certificateNumber);
+  result = result.replace(/BEARER_NAME/g, data.bearerName);
+  result = result.replace(/NATIVE_OF/g, data.nativeOf);
+  result = result.replace(/VILLAGE/g, data.village);
+  
+  // Replace element content using getElementById placeholders
+  result = result.replace(/<span id="our_ref"[^>]*>.*?<\/span>/g, `<span id="our_ref">${data.ourRef}</span>`);
+  result = result.replace(/<span id="your_ref"[^>]*>.*?<\/span>/g, `<span id="your_ref">${data.yourRef}</span>`);
+  result = result.replace(/<span id="certificate_number"[^>]*>.*?<\/span>/g, `<span id="certificate_number">${data.certificateNumber}</span>`);
+  result = result.replace(/<strong id="bearer_name"[^>]*>.*?<\/strong>/g, `<strong id="bearer_name">${data.bearerName}</strong>`);
+  result = result.replace(/<strong id="native_of"[^>]*>.*?<\/strong>/g, `<strong id="native_of">${data.nativeOf}</strong>`);
+  result = result.replace(/<strong id="village"[^>]*>.*?<\/strong>/g, `<strong id="village">${data.village}</strong>`);
+  result = result.replace(/<p id="date"[^>]*>.*?<\/p>/g, `<p class="date-line" id="date">${formatDate(data.dateIssued)}</p>`);
+  
+  // Replace logo
+  if (data.logoBase64) {
+    result = result.replace(/src="[^"]*" alt="Ibeno Local Government Logo"/, `src="data:image/png;base64,${data.logoBase64}" alt="Ibeno Local Government Logo"`);
+  }
+  
+  // Replace QR code
+  if (data.qrCodeData) {
+    result = result.replace(/<div class="qr-code"[^>]*>.*?<\/div>/g, 
+      `<div class="qr-code" id="qr_code_placeholder"><img src="${data.qrCodeData}" alt="QR Code for Certificate Verification" style="width: 100%; height: 100%; object-fit: contain;" /></div>`);
+  }
+  
+  // Replace passport photo if provided
+  if (data.passportPhoto) {
+    result = result.replace(/<div class="passport-photo"[^>]*>.*?<\/div>/g,
+      `<div class="passport-photo" id="passport_photo_placeholder"><img src="${data.passportPhoto}" alt="Passport Photo" style="width: 100%; height: 100%; object-fit: cover;" /></div>`);
+  }
+  
+  return result;
 }
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
-
+function formatDate(dateString: string): string {
   try {
-    // Rate limiting
-    const clientId = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-    const rateCheck = checkRateLimit(clientId);
-    
-    if (!rateCheck.allowed) {
-      return new Response(
-        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-        { 
-          status: 429, 
-          headers: { 
-            ...corsHeaders, 
-            'Content-Type': 'application/json',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': Math.ceil((Date.now() + RATE_LIMIT.windowMs) / 1000).toString()
-          } 
-        }
-      );
-    }
-
-    const rawData = await req.json();
-    
-    // Enhanced logging for monitoring
-    console.log('Certificate generation request:', {
-      timestamp: new Date().toISOString(),
-      client_id: clientId,
-      bearer_name: rawData.bearerName,
-    });
-    
-    // Validate and sanitize input data
-    const certificateData: CertificateData = validateCertificateData(rawData);
-
-    // Validate QR code URL
-    try {
-      new URL(certificateData.qrCodeData);
-    } catch {
-      throw new Error('Invalid QR code URL');
-    }
-
-    // Generate QR code using QR Server API
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(certificateData.qrCodeData)}&format=png`;
-    const qrResponse = await fetch(qrUrl);
-    
-    if (!qrResponse.ok) {
-      throw new Error('Failed to generate QR code from external service');
-    }
-
-    const qrImageBuffer = await qrResponse.arrayBuffer();
-    const base64QR = btoa(String.fromCharCode(...new Uint8Array(qrImageBuffer)));
-    const qrCode = `data:image/png;base64,${base64QR}`;
-
-    // Load certificate template and logo
-    const template = await loadCertificateTemplate();
-    const logoBase64 = await loadLogoAsBase64();
-
-    // Format the date for display
-    const dateFormatted = new Date(certificateData.dateIssued).toLocaleDateString('en-GB', {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
-
-    // Create QR code img tag for proper insertion
-    const qrCodeImg = `<img src="${qrCode}" alt="QR Code for Certificate Verification" style="width: 100%; height: 100%; object-fit: contain;" />`;
-    
-    // Create passport photo img tag or placeholder
-    const passportPhotoImg = certificateData.passportPhoto 
-      ? `<img src="${certificateData.passportPhoto}" alt="Passport Photo" style="width: 100%; height: 100%; object-fit: cover;" />`
-      : `<div class="passport-placeholder">Passport<br>Photo</div>`;
-    
-    // Replace template placeholders with actual data using safe HTML replacement
-    const certificateHTML = template
-      .replace(/{{ourRef}}/g, certificateData.ourRef)
-      .replace(/{{yourRef}}/g, certificateData.yourRef)
-      .replace(/{{date}}/g, dateFormatted)
-      .replace(/{{certificateNumber}}/g, certificateData.certificateNumber)
-      .replace(/{{full_name}}/g, certificateData.bearerName)
-      .replace(/{{bearerName}}/g, certificateData.bearerName)
-      .replace(/{{clan}}/g, certificateData.nativeOf)
-      .replace(/{{nativeOf}}/g, certificateData.nativeOf)
-      .replace(/{{village}}/g, certificateData.village)
-      .replace(/{{qrCode}}/g, qrCodeImg)
-      .replace(/{{passportPhoto}}/g, passportPhotoImg)
-      .replace(/{{logoBase64}}/g, logoBase64);
-
-    // Initialize Supabase client for storage
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
-    let htmlUrl = null;
-    let pdfUrl = null;
-    
-    if (supabaseUrl && supabaseServiceKey) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      
-      try {
-        // Save HTML file to storage
-        const htmlFileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.html`;
-        const htmlFilePath = `${new Date().getFullYear()}/${htmlFileName}`;
-        
-        const { data: htmlUploadData, error: htmlUploadError } = await supabase.storage
-          .from('certificates')
-          .upload(htmlFilePath, new Blob([certificateHTML], { type: 'text/html' }), {
-            contentType: 'text/html',
-            upsert: true
-          });
-
-        if (htmlUploadError) {
-          console.error('HTML storage upload error:', htmlUploadError);
-        } else {
-          // Get public URL for HTML
-          const { data: htmlUrlData } = supabase.storage
-            .from('certificates')
-            .getPublicUrl(htmlFilePath);
-          
-          htmlUrl = htmlUrlData.publicUrl;
-          console.log('Certificate HTML saved to storage:', htmlUrl);
-        }
-
-        // Generate PDF using HTMLCSStoImage API
-        try {
-          const response = await fetch('https://htmlcsstoimage.com/demo_run', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              html: certificateHTML,
-              css: '',
-              google_fonts: 'Georgia',
-              format: 'pdf',
-              width: 595,
-              height: 842,
-              device_scale_factor: 2,
-              render_when_ready: false,
-              viewport_width: 595,
-              viewport_height: 842
-            })
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            if (result.url) {
-              // Download the generated PDF
-              const pdfResponse = await fetch(result.url);
-              if (pdfResponse.ok) {
-                const pdfBuffer = await pdfResponse.arrayBuffer();
-                
-                // Save PDF to storage
-                const pdfFileName = `certificate_${certificateData.certificateNumber.replace(/\s/g, '_')}.pdf`;
-                const pdfFilePath = `${new Date().getFullYear()}/${pdfFileName}`;
-                
-                const { data: pdfUploadData, error: pdfUploadError } = await supabase.storage
-                  .from('certificates')
-                  .upload(pdfFilePath, new Blob([pdfBuffer], { type: 'application/pdf' }), {
-                    contentType: 'application/pdf',
-                    upsert: true
-                  });
-
-                if (pdfUploadError) {
-                  console.error('PDF storage upload error:', pdfUploadError);
-                } else {
-                  // Get public URL for PDF
-                  const { data: pdfUrlData } = supabase.storage
-                    .from('certificates')
-                    .getPublicUrl(pdfFilePath);
-                  
-                  pdfUrl = pdfUrlData.publicUrl;
-                  console.log('Certificate PDF saved to storage:', pdfUrl);
-                }
-              }
-            }
-          }
-        } catch (pdfError) {
-          console.error('PDF generation failed:', pdfError);
-        }
-      } catch (storageError) {
-        console.error('Storage operation failed:', storageError);
-      }
-    }
-
-    return new Response(
-      JSON.stringify({ 
-        html: certificateHTML,
-        htmlUrl,
-        pdfUrl,
-        qrCode,
-        certificateNumber: certificateData.certificateNumber,
-        success: true
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
   } catch (error) {
-    console.error('Error generating certificate:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to generate certificate', details: error.message }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
-    );
+    return dateString;
   }
-});
+}
+
+function getDefaultLogoBase64(): string {
+  // A simple placeholder logo (1x1 transparent PNG)
+  return 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+}
